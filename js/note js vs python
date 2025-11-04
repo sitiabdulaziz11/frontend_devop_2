@@ -1,0 +1,12 @@
+
+Practice for Today day one
+
+Try to translate these Python snippets into JavaScript:
+
+🐍 Python → 🟨 JavaScript
+Python	JavaScript
+x = 5	let x = 5;
+for i in range(5): print(i)	for (let i = 0; i < 5; i++) { console.log(i); }
+def greet(name): return "Hello " + name	function greet(name) { return "Hello " + name; }
+person = {"name": "Siti", "age": 25}	let person = { name: "Siti", age: 25 };
+print(person["name"])	console.log(person.name);

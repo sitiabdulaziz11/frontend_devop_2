@@ -1,0 +1,55 @@
+let and const → Block Scope
+
+They only exist inside the block { ... } where they are declared.
+
+Example:
+
+if (true) {
+  let x = 10;
+  const y = 20;
+  console.log(x, y); // ✅ Works inside
+}
+console.log(x, y);   // ❌ Error — not visible outside
+
+
+✅ They are block-scoped — only visible inside { }.
+
+🟨 2. var → Function Scope (or Global if outside a function)
+
+If you use var, it does not care about { } (blocks).
+It only cares about functions or the global area.
+
+Example:
+
+if (true) {
+  var z = 30;
+}
+console.log(z);  // ✅ Works — z is visible outside the block!
+
+
+❗Even though z was declared inside the if,
+because it used var, it becomes global (visible everywhere in the file).
+
+🧩 Function Scope Example
+
+If var is declared inside a function, it’s only visible inside that function.
+
+function test() {
+  var name = "Siti";
+  console.log(name); // ✅ Works
+}
+
+console.log(name);   // ❌ Error — not visible outside the function
+
+
+So:
+
+Inside a function → var is function-scoped
+
+Outside any function → var is global
+
+⚖️ Summary Table
+Keyword	Scope Type	Can reassign?	Visible outside { }?	Hoisted?
+var	Function or Global	✅ Yes	✅ Yes (if not in function)	✅ Yes
+let	Block	✅ Yes	❌ No	❌ No
+const	Block	❌ No	❌ No	❌ No
