@@ -182,3 +182,147 @@ npx create-react-app my-app
 Tool	Typical Folder Structure
 Vite	Has vite.config.js or vite.config.ts
 CRA	Has no vite.config.js, but includes a public/ and src/ folder with a react-scripts dependency
+
+
+integrate your Django REST Framework (DRF) backend with a React frontend using Vite step by step. 
+
+1️⃣ Make sure your DRF backend is running
+
+Your backend API (DRF) is running at:
+
+http://127.0.0.1:8000/api/students/
+
+
+Test it in the browser — you should see the list of students in JSON.
+
+2️⃣ Install and setup CORS in Django
+
+By default, your React app (localhost:5173) is a different origin, so you need CORS headers.
+
+Install django-cors-headers:
+
+pip install django-cors-headers
+
+
+Add it to INSTALLED_APPS in settings.py:
+
+INSTALLED_APPS = [
+    ...
+    'corsheaders',
+]
+
+
+Add middleware at the top of MIDDLEWARE in settings.py:
+
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    ...
+]
+
+
+Allow your frontend origin:
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Vite dev server
+]
+
+
+⚠️ For development only! For production, you’ll need to configure the actual domain.
+
+Create a Vite + React app
+npm create vite@latest frontend -- --template react
+cd frontend
+npm install
+npm run dev
+
+
+Your dev server will usually run on http://localhost:5173/.
+
+Open this URL in your browser — you should see the React starter page.
+
+4️⃣ Create a service file for API calls
+
+frontend/src/services/studentService.js
+
+import axios from "axios";
+
+const API_URL = "http://127.0.0.1:8000/api/students/";
+
+export const getStudents = () => axios.get(API_URL);
+
+export const createStudent = (student) => axios.post(API_URL, student);
+
+export const updateStudent = (id, student) =>
+  axios.put(`${API_URL}${id}/`, student);
+
+export const deleteStudent = (id) => axios.delete(`${API_URL}${id}/`);
+
+Use API in a React component
+
+frontend/src/App.jsx
+
+import React, { useEffect, useState } from "react";
+import { getStudents, createStudent, updateStudent, deleteStudent } from "./services/studentService";
+
+function App() {
+  const [students, setStudents] = useState([]);
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [grade, setGrade] = useState("");
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const fetchStudents = async () => {
+    try {
+      const response = await getStudents();
+      setStudents(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleAddStudent = async () => {
+    if (!name || !age || !grade) return;
+    await createStudent({ name, age, grade });
+    setName(""); setAge(""); setGrade("");
+    fetchStudents();
+  };
+
+  const handleDeleteStudent = async (id) => {
+    await deleteStudent(id);
+    fetchStudents();
+  };
+
+  return (
+    <div>
+      <h1>Students</h1>
+      <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+      <input placeholder="Age" value={age} onChange={(e) => setAge(e.target.value)} />
+      <input placeholder="Grade" value={grade} onChange={(e) => setGrade(e.target.value)} />
+      <button onClick={handleAddStudent}>Add Student</button>
+
+      <ul>
+        {students.map((student) => (
+          <li key={student.id}>
+            {student.name} ({student.age}, {student.grade})
+            <button onClick={() => handleDeleteStudent(student.id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+6️⃣ export default App;
+
+Run the React frontend
+npm run dev
+
+
+Open http://localhost:5173/
+
+You can add, view, and delete students directly in React.
+
+All changes are synced with your DRF backend.
