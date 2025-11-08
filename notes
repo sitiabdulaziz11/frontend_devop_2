@@ -1,0 +1,25 @@
+To create express project:
+    npm init -y
+    npm install express
+or
+npx express-generator myapp
+cd myapp
+npm install
+
+
+1 To set up and run react:  modern
+npm create vite@latest <directory name> >-- --template react
+cd frontend
+npm install
+npm run dev
+
+
+2 create-react-app (CRA), less modern
+
+Command:
+
+npx create-react-app student-frontend
+cd student-frontend
+npm start
+
+axios.get('http://localhost:5000/')

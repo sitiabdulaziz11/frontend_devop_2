@@ -53,3 +53,63 @@ Keyword	Scope Type	Can reassign?	Visible outside { }?	Hoisted?
 var	Function or Global	✅ Yes	✅ Yes (if not in function)	✅ Yes
 let	Block	✅ Yes	❌ No	❌ No
 const	Block	❌ No	❌ No	❌ No
+
+explorer.exe index.html  to open .html on browset in wsl.
+
+⚙️ Promises + async/await
+Promise
+
+A Promise is something that takes time (like fetching data) and can be in one of three states:
+
+Pending
+
+Resolved (fulfilled)
+
+Rejected
+
+Example:
+
+const promise = new Promise((resolve, reject) => {
+  setTimeout(() => resolve("Done!"), 2000);
+});
+promise.then(result => console.log(result)); // "Done!" after 2s
+
+async/await
+
+A cleaner way to handle Promises.
+
+Use await inside an async function to wait for the Promise to finish.
+
+Example:
+
+async function getData() {
+  const result = await promise;
+  console.log(result);
+}
+getData(); // "Done!" after 2s
+
+
+1️⃣ The Promise
+const promise = new Promise((resolve, reject) => {
+  setTimeout(() => resolve("Done!"), 2000);
+});
+
+promise.then(result => console.log(result));
+is how we handle the result of the Promise after it finishes.
+
+Let’s break it down 👇
+
+🔸 promise
+→ is the Promise object (something that will finish later)
+
+🔸 .then(...)
+→ means “when this Promise finishes successfully, do this next.”
+
+🔸 result => console.log(result)
+→ is a function that runs with the resolved value ("Done!" in this case)
+
+Same idea in JavaScript:
+
+const response = await fetch("url"); // Response object
+const data = await response.json();  // Actual data (array of objects)
+
