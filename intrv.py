@@ -1,8 +1,14 @@
 
+def reverse_string(text):
+    return text[::-1]
+
+# Example use
+print(reverse_string("Django"))  # Output: ognajD
+
 def check():
     return f"he"
 print(check())
-#     print("he")
+#     print("he")6
 # check()
 
 # def even_or_odd(num): incorrect?
