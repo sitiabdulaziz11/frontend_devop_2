@@ -1,3 +1,6 @@
+
+To run and see the result/display
+
 To create express project:
     npm init -y
     npm install express
@@ -15,12 +18,57 @@ npm run dev
 
 
 2 create-react-app (CRA), less modern
-
 Command:
-
 npx create-react-app student-frontend
 cd student-frontend
 npm start
 
+Open browser at http://localhost:3000/
+Replace code in App.js with your components → you’ll see output live.
+
+
 axios.get('http://localhost:5000/')
 
+
+
+To create and use next.js:
+    npx create-next-app@latest my-next-app
+    cd my-next-app
+    npm run dev
+    Open browser at http://localhost:3000/
+
+    Edit pages/index.js → your changes appear live.
+
+
+
+Can I use Next.js for backend, and how?
+
+Yes! Next.js is fullstack:
+
+Frontend: Components, JSX, React, pages.
+
+Backend: API routes → act like server endpoints.
+
+Example API route:
+
+my-next-app/pages/api/hello.js
+
+export default function handler(req, res) {
+  res.status(200).json({ message: "Hello from backend!" });
+}
+
+
+Then, in frontend:
+
+fetch('/api/hello')
+  .then(res => res.json())
+  .then(data => console.log(data.message));
+
+
+How it works:
+
+pages/api/* files are treated as serverless functions.
+
+Can handle GET, POST, etc., like a mini backend.
+
+✅ This is why Next.js is called fullstack React framework.

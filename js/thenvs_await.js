@@ -89,4 +89,19 @@ fetch("url")
 .then(data => console.log(data))
 .catch(error => console.log("Error:", error));
 
+// for try
+async function api_fetch() {
+    try {
+        const respo = await fetch("url");
+        const data = await respo.json();
+        closed.log(data)
+    } catch {
+        console.error("err", error);
+        
+    }
+    }
+    
+    api_fetch()
 
+// async/await → modern, cleaner.
+// .then/.catch → older, still valid.

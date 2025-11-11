@@ -1,0 +1,108 @@
+Django Backend
+
+Django runs on Python, so it needs a Python virtual environment (venv).
+
+This venv isolates your project’s Python packages (like Django, djangorestframework, etc.) from your global Python setup.
+
+Example setup:
+
+# Inside your backend folder
+python -m venv venv
+source venv/bin/activate       # On Mac/Linux
+venv\Scripts\activate          # On Windows
+
+pip install django djangorestframework
+
+⚛️ React Frontend
+
+React runs on Node.js, not Python.
+
+It uses npm or yarn to manage dependencies.
+
+So, you don’t use venv here — instead, you use node_modules created by npm.
+
+Example setup:
+
+# Inside your frontend folder
+npm create vite@latest frontend -- --template react
+cd frontend
+npm install
+npm run dev
+
+
+This automatically sets up React’s environment using Node.
+
+📂 Typical Project Structure
+my_project/
+│
+├── backend/          # Django project
+│   ├── venv/         # Python virtual environment
+│   ├── manage.py
+│   └── my_app/
+│
+└── frontend/         # React project
+    ├── node_modules/
+    ├── package.json
+    └── src/
+
+✅ Summary
+Part	Uses venv?	Uses npm/yarn?
+Django Backend	✅ Yes	❌ No
+React Frontend	❌ No	✅ Yes
+
+🧩 Option 1:
+sudo apt install python3-django
+
+
+→ Installs Django system-wide (for all users).
+
+⚠️ Not Recommended for Projects
+
+Because:
+
+It installs Django globally, not in your project’s virtual environment.
+
+You can’t easily control or upgrade its version per project.
+
+It may cause version conflicts if you have multiple Django projects.
+
+Use this only if you want a quick test or to run a global Django setup (not for development).
+
+🧠 Option 2:
+pip install django djangorestframework
+
+
+→ Installs Django inside your virtual environment (venv).
+
+✅ Recommended for Development
+
+Because:
+
+Keeps your project isolated (no global mess).
+
+You can easily manage versions in your requirements.txt.
+
+Works well when deploying or sharing your code.
+
+Typical setup:
+
+# create and activate venv
+python3 -m venv venv
+source venv/bin/activate     # Linux/macOS
+venv\Scripts\activate        # Windows
+
+# then install Django and DRF
+pip install django djangorestframework
+
+💡 Summary
+Command	Installs Where	Recommended?	Use Case
+sudo apt install python3-django	System-wide	❌ No	Quick system test
+pip install django djangorestframework	Inside venv	✅ Yes	Project development
+
+✅ So the right approach:
+Use
+
+pip install django djangorestframework
+
+
+after activating your virtual environment.
