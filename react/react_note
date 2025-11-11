@@ -714,3 +714,30 @@ What you write	What React does internally
 <Welcome name="Siti" />	Welcome({ name: "Siti" })
 <button onClick={handleClick}>	Binds function reference handleClick
 <div>Hello</div>	React.createElement('div', null, 'Hello')
+
+UI stands for User Interface.
+
+👉 In simple words, UI is everything the user sees and interacts with on the screen — buttons, text, images, input boxes, menus, etc.
+
+So when we say:
+
+“App is the main (parent) component. Its job: put together your UI.”
+
+It means the App component is responsible for combining and displaying all the visible parts of your application — for example:
+
+function App() {
+  return (
+    <div>
+      <Header />
+      <Welcome name="Siti" />
+      <Footer />
+    </div>
+  );
+}
+
+
+Here:
+
+Header, Welcome, and Footer are smaller UI components.
+
+The App component puts them together to form the full User Interface (what the user sees on the page).
