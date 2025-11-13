@@ -1,0 +1,176 @@
+Yes, both useState and useEffect can be involved when something “changes,”
+but they do very different jobs 👇
+
+🧩 The Core Difference
+🪙 useState → holds and updates data
+
+useState is for storing and changing values inside a component.
+
+👉 It’s like a variable that remembers its value even after re-rendering.
+
+Example:
+
+const [name, setName] = useState("Siti");
+
+
+name = the current value
+
+setName() = function to change it
+
+When you call setName("Eliyas"), React re-renders with the new value.
+
+🧠 So: useState = memory + trigger re-render
+
+⚡ useEffect → runs code after something happens
+
+useEffect is for side effects — code that runs after React updates the screen.
+
+Think of it as:
+
+“When my component first appears or when some data changes, do something extra.”
+
+Examples:
+
+Fetch data from an API
+
+Log to console
+
+Change the document title
+
+Set up a timer
+
+useEffect(() => {
+  console.log("Hello from useEffect!");
+}, []);
+
+
+🧠 So: useEffect = reaction to change (not for storing data)
+
+💡 How they work together
+
+They often work together like this:
+
+import { useState, useEffect } from "react";
+
+function Welcome() {
+  const [name, setName] = useState("Siti");
+
+  useEffect(() => {
+    // runs after the first render
+    setName("Eliyas");
+  }, []); // empty = run once
+
+  return <h1>Hello, {name}!</h1>;
+}
+
+
+useState → stores the name and lets React re-render when it changes
+
+useEffect → decides when and why to change the state
+
+🔁 Simple analogy
+React Hook	What it does	Real-life analogy
+useState	Holds data and updates the screen	A notebook where you write a value
+useEffect	Runs code when something happens (after render)	A reminder that says “After you write, do this action”
+
+
+💡 What is JSX?
+
+JSX (JavaScript XML) is a special syntax extension for JavaScript that React uses to describe what the UI should look like.
+
+It allows you to write HTML-like code inside JavaScript.
+
+🧩 Example
+
+Without JSX (pure JavaScript):
+
+const element = React.createElement('h1', null, 'Hello, Siti!');
+
+
+With JSX (simpler and more readable):
+
+const element = <h1>Hello, Siti!</h1>;
+
+
+✅ Both do the same thing, but JSX looks like HTML — that’s why it’s easier to write and understand.
+
+⚙️ How JSX Works
+
+Even though JSX looks like HTML, it’s not HTML.
+When you compile your React code (using Babel or Vite), JSX turns into regular JavaScript.
+
+Example:
+
+function Welcome() {
+  return <h1>Hello, world!</h1>;
+}
+
+
+👉 Under the hood, it becomes:
+
+function Welcome() {
+  return React.createElement("h1", null, "Hello, world!");
+}
+
+🧠 JSX Rules You Must Remember
+
+Only one parent element can be returned:
+
+// ✅ Correct
+return (
+  <div>
+    <h1>Hello</h1>
+    <p>Welcome!</p>
+  </div>
+);
+
+// ❌ Wrong
+return (
+  <h1>Hello</h1>
+  <p>Welcome!</p>
+);
+
+
+Use {} for JavaScript expressions:
+
+const name = "Siti";
+return <h1>Hello, {name}!</h1>;
+
+
+Use className instead of class:
+
+<div className="container">Content</div>
+
+
+All tags must close properly:
+
+<img src="photo.jpg" />   // ✅ correct
+<img src="photo.jpg">     // ❌ wrong
+
+🧩 JSX Example in a Full Component
+import React from "react";
+
+function Greeting() {
+  const name = "Siti";
+  const age = 25;
+
+  return (
+    <div>
+      <h1>Hello, {name}!</h1>
+      <p>You are {age} years old.</p>
+    </div>
+  );
+}
+
+export default Greeting;
+
+
+👉 This mixes HTML-like structure and JavaScript logic together — that’s the beauty of JSX!
+
+✅ Summary
+Concept	Meaning
+JSX	JavaScript XML — lets you write HTML inside JS
+Why use it	Easier to read and write UI code
+Converts to	React.createElement() calls
+Key rules	One parent, {} for JS, className instead of class, close tags
+

@@ -82,25 +82,23 @@
 // };
 
 
-import { useState, useEffect } from "react";
+// import { useState, useEffect } from "react";
 
-function Welcome({ name }) {
-  const [newName, setNewName] = useState(name);
+// function Welcome({ name }) {
+//   const [newName, setNewName] = useState(name);
 
-  useEffect(() => {
-    console.log("This runs AFTER the first render");
-    setTimeout(() => {
-      setNewName("Eliyas");
-    }, 2000);  // waits 2 seconds before updating
-  }, []); // empty [] means run once
-  return <h1>Hello, {newName}!</h1>;
+//   useEffect(() => {
+//     console.log("This runs AFTER the first render");
+//     setTimeout(() => {
+//       setNewName("Eliyas");
+//     }, 2000);  // waits 2 seconds before updating
+//   }, []); // empty [] means run once
+//   return <h1>Hello, {newName}!</h1>;
+// }
 
-}
-
-export default function App() {
-  return <Welcome name="Siti" />;
-}
-
+// export default function App() {
+//   return <Welcome name="Siti" />;
+// }
 
 
 // import { useState, useEffect } from "react";
@@ -136,3 +134,29 @@ export default function App() {
 //     </>
 //   );
 // }
+
+
+// import React from "react"
+
+// function Greeating() {
+//   const name = "siti"
+//   const age = "28"
+
+//   return (
+//     <>
+//       <h1>Asselamu aleycum {name} </h1>
+//       <p> You are 28 years old</p>
+//     </>
+//   )
+     
+// }
+// export default Greeating;
+
+// import { application } from "express"
+import Counter from "./Counter";
+
+export default function application() {
+  return (
+    < Counter />
+  )
+}
