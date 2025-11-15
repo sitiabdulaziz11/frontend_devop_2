@@ -1580,3 +1580,78 @@ React Feature	When it runs	Example
 Render	When the component first loads or after state changes	return <h1>Hello, {name}</h1>
 useEffect	After the first render (and re-renders, depending on dependencies)	useEffect(() => {...}, [])
 Event (onClick)	When user interacts	<button onClick={handleClick}>
+
+🧩 4. useEffect
+
+Runs after render.
+
+Example: run once on load
+
+useEffect(() => {
+  console.log("Page loaded");
+}, []);
+
+
+Example: run every time count changes:
+
+useEffect(() => {
+  console.log("Count changed");
+}, [count]);
+
+🟦 What is useEffect?
+
+👉 useEffect runs some code after React finishes showing things on the screen.
+
+Think like this:
+
+React shows the UI
+
+After that, useEffect runs
+
+🟩 VERY SIMPLE EXAMPLE 1
+Run only ONCE when the page opens
+useEffect(() => {
+  console.log("Page loaded");
+}, []);
+
+✔ What does this mean?
+
+[] means: Run only one time
+
+When the component first appears on the screen → it prints “Page loaded”
+
+🔊 Think like this:
+
+🗣️ “When the page opens, say ‘Page loaded’ one time.”
+
+🟩 VERY SIMPLE EXAMPLE 2
+Run every time count changes
+useEffect(() => {
+  console.log("Count changed");
+}, [count]);
+
+✔ What does this mean?
+
+[count] means:
+Whenever count changes → run the code again
+
+So if:
+
+count = 0 → nothing logged yet
+
+user clicks button → count = 1 → prints “Count changed”
+
+clicks again → count = 2 → prints again
+
+again → count = 3 → prints again
+
+🔊 Think like this:
+
+🗣️ “If the value of count changes, say ‘Count changed’.”
+
+🟥 NOW THE MOST IMPORTANT PART
+🎯 The bracket [] tells useEffect WHEN to run
+Dependency	When useEffect runs
+[]	Run only once (when page loads)
+[count]	Run every time count changes
+no []	Run every time the component re-renders

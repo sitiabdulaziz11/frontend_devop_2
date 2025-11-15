@@ -1,0 +1,22 @@
+
+<div style={{ textAlign: "center", marginTop: "50px" }}>
+
+You expected the entire page to be centered
+
+But inline style only centers the content inside the div, not the whole page.
+
+Example:
+
+<div style={{ textAlign: "center" }}>
+
+
+This centers only the text, not the whole page.
+
+If you want the div itself centered, you must use:
+
+<div style={{
+  marginTop: "50px",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+}}>

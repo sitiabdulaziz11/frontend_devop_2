@@ -16,6 +16,7 @@
 //           <img src={reactLogo} className="logo react" alt="React logo" />
 //         </a>
 //       </div>
+
 //       <h1>Vite + React</h1>
 //       <div className="card">
 //         <button onClick={() => setCount((count) => count + 1)}>
@@ -153,13 +154,15 @@
 // export default Greeating;
 
 
-// import Counter from "./Counter";
+import Counter from "./Counter";
+import TodoApp from "./TodoApp";
 
-// export default function application() {
-//   return (
-//     < Counter />
-//   )
-// }
+export default function application() {
+  return (
+    // < Counter />
+    < TodoApp />
+  )
+}
 
 
 // import {useState} from "react"
@@ -183,16 +186,17 @@
 // export default InputBox;
 
 
-export default function Demo() {  // not work b/c no key
-const names = ["Siti", "Eliyas", "Abdulaziz"];
+// export default function Demo() {  // works but give warning b/c no key
+// const names = ["Siti", "Eliyas", "Abdulaziz"];
 
-return (
-  <ul>
-    {names.map((n) => (
-      <li>{n}</li>   // ❌ missing key
-    ))}
-  </ul>
-);}
+// return (
+//   <ul>
+//     {names.map((n) => (
+//       <li>{n}</li>   // ❌ missing key
+//     ))}
+//   </ul>
+// );}
+
 // but bloew work
 //   return (
 //     <ul>
@@ -215,3 +219,30 @@ return (
 //   );
 // }
 
+// const users = [
+//   { id: 1, name: "Siti" },
+//   { id: 2, name: "Eliyas" },
+// ];
+
+// <ul>
+//   {users.map(user => (
+//     <li key={user.id}>{user.name}</li>
+//   ))}
+// </ul>
+
+
+// import {useState} from "react";
+
+// function Form() {
+//   const [name, setName] = useState("");
+
+//   return (
+//     <div style={{ textAlign: "center", marginTop: "50px", border: "2px solid green", }}>
+
+//       <input value={name} onChange={(e) => setName(e.target.value)} />
+//       <button onClick={() => alert(name)}>Submit</button>
+    
+//     </div>
+//   );
+// }
+// export default Form;
