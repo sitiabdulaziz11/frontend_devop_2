@@ -1,0 +1,77 @@
+why i got TypeError: todos.map is not a function, even though , setTodos(...todos, text);
+Here is exactly why you still got the error:
+
+❌ Mistake:
+
+You wrote:
+
+setTodos(...todos, text);
+
+
+This is WRONG syntax.
+
+❗ This creates NOTHING like an array.
+
+React receives something like:
+
+setTodos("pray", "study", "eat")
+
+
+So todos is no longer an array, and .map() fails.
+
+That’s why you get:
+
+TypeError: todos.map is not a function
+
+✅ Correct syntax:
+setTodos([...todos, text]);
+
+What this means:
+
+[ ...todos ] → creates a new array
+
+[ ...todos, text ] → adds the new item at the end
+
+React re-renders correctly
+
+🧠 Remember the rule:
+✔ .map() ONLY works on arrays
+✔ ...todos must be inside [] brackets
+❌ Never write: setTodos(...todos)
+❌ Never forget the []
+✅ Here is the correct Todo App structure:
+import { useState } from "react";
+
+export default function TodoApp() {
+  const [text, setText] = useState("");
+  const [todos, setTodos] = useState([]);
+
+  function addTodo() {
+    setTodos([...todos, text]);
+    setText("");
+  }
+
+  return (
+    <>
+      <input 
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <button onClick={addTodo}>Add Todo</button>
+
+      <ul>
+        {todos.map((todo, index) => (
+          <li key={index}>{todo}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+✨ Checklist (must be true)
+Thing	Must Be
+todos	an array ([])
+text	a string ("")
+setTodos([...todos, text])	correct
+setTodos(...todos, text)	❌ wrong
+
