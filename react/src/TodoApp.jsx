@@ -4,7 +4,6 @@ import { useState } from "react";
 export default function TodoApp() {
     const [text, setText] = useState("");  // text starts empty
     const [todos, setTodos] = useState([]);  // todos is an empty array
-    // const [del, setDel] = useState();
 
     function AddTodoList() {
         setTodos([...todos, text]);  // add new todo to array
@@ -15,9 +14,8 @@ export default function TodoApp() {
     //     setText(e.target.value);
     // }
 
-    function DeleteTodo(id){
-        const toDel = setDel(filter(id))
-        delete(toDel);
+    function deleteTodo(id){
+        setTodos(todos.filter((todo) => todo.id !== id));
     }
 
     return (
@@ -32,9 +30,14 @@ export default function TodoApp() {
             <ul>
                 {
                     todos.map((todo, index) => (
-                        <li key={index}>{todo}   <button>delete</button> <button>edit</button></li>
-                    ))
+                        <li key={index}>
+                            {todo}
+                            <button onClick={() => deleteTodo(todo.id)}>delete</button>
+                            <button>edit</button>
+                        </li>
+                        ))                              
                 }
+                 
             </ul>
         </>
     )

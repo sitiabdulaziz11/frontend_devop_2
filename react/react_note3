@@ -331,3 +331,36 @@ now other way to get key?
 You said:
 whaich one better uuid or date?
 
+filter is a method on arrays, not a standalone function.
+todos.filter(todo => todo.id !== id)
+
+Creates a new array without the todo with that id.
+
+You said:
+i can;t understand onClick expects a function reference, not the result of calling a function. and The arrow function () => deleteTodo(todo.id) is called only when the button is clicked. please could you explany more detaily? .
+
+You said:
+ok why onClick={deleteTodo(todo.id)} runs immediately , why not store on onclick, is it b/c of not return or what?
+You said:
+React stores the function reference, what mean by  function reference
+You said:
+ok, You need a function that takes no arguments (React’s onClick will call it without arguments):
+
+onClick={() => deleteTodo(todo.id)} , here arrow func is a func to call other func?
+
+Define deleteTodo
+function deleteTodo(id) {
+  setTodos(todos.filter(todo => todo.id !== id));
+}
+
+
+filter returns a new array without the todo with that id
+
+React re-renders automatically
+function deleteTodo(id) {
+  setTodos(todos.filter(todo => todo.id !== id));
+}
+filter returns a new array without the todo with that id
+
+React re-renders automatically
+
