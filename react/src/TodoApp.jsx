@@ -6,10 +6,15 @@ export default function TodoApp() {
     const [todos, setTodos] = useState([]);  // todos is an empty array
 
     function AddTodoList() {
-        setTodos([...todos, text]);  // add new todo to array
+        // setTodos([text, ...todos]);  // add new todo to array
+
+        if (text.trim() === "") {
+            return; // do nothing
+        }
+        
+        setTodos([{id: Date.now(), text }, ...todos]);  // add new todo to array
         setText("");  // clear input
     }
-
     // function handleChange(e) {
     //     setText(e.target.value);
     // }
@@ -17,6 +22,8 @@ export default function TodoApp() {
     function deleteTodo(id){
         setTodos(todos.filter((todo) => todo.id !== id));
     }
+    
+    // function editTodo()
 
     return (
         <>
@@ -29,9 +36,12 @@ export default function TodoApp() {
 
             <ul>
                 {
-                    todos.map((todo, index) => (
-                        <li key={index}>
-                            {todo}
+                    // todos.map((todo, index) => (
+                    todos.map((todo) => (
+                        // <li key={index}>
+                        <li key={todo.id}>
+                            {/* {todo} */}
+                            {todo.text}
                             <button onClick={() => deleteTodo(todo.id)}>delete</button>
                             <button>edit</button>
                         </li>

@@ -1,4 +1,4 @@
-why i got TypeError: todos.map is not a function, even though , setTodos(...todos, text);
+1 why i got TypeError: todos.map is not a function, even though , setTodos(...todos, text);
 Here is exactly why you still got the error:
 
 ❌ Mistake:
@@ -75,3 +75,17 @@ text	a string ("")
 setTodos([...todos, text])	correct
 setTodos(...todos, text)	❌ wrong
 
+
+2 {
+                    todos.map((todo, index) => (
+                        <li key={index}>
+                            {todo}
+                            <button onClick={() => deleteTodo(todo.id)}>delete</button>
+                            <button>edit</button>
+                        </li>
+                        ))                              
+                }
+                delet deletes all todos, b/c 
+                <button onClick={() => deleteTodo(todo.id)}>delete</button>
+But in your .map, each todo seems to be a string (because you do {todo} directly).
+ Strings don’t have an id property, so todo.id is undefined.

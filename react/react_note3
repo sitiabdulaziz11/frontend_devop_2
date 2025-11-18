@@ -364,3 +364,184 @@ filter returns a new array without the todo with that id
 
 React re-renders automatically
 
+
+1. Why yesterday the correct answer was c
+
+Yesterday the question was:
+
+If
+todos = ["apple", "banana"]
+What does
+[..., todos, "orange"]
+produce?
+
+Correct answer:
+
+👉 ["apple", "banana", "orange"]
+Because:
+
+[...todos, "orange"]
+
+
+means:
+
+Spread existing items first
+
+Then add "orange" at the end
+
+So "orange" goes to the bottom.
+
+This is correct.
+
+✅ 2. Why today you can add new todos at the top
+
+Now YOU want the new todo to appear at the top of the list.
+
+So we change the order:
+
+[ newTodo, ...todos ]
+
+
+This means:
+
+Put newTodo first
+
+Then spread all old todos after it
+
+So newTodo goes to the top.
+
+🎯 They are both correct — different orders give different results
+✔ Add at bottom:
+[...todos, newTodo]
+
+✔ Add at top:
+[newTodo, ...todos]
+
+Example:
+
+If:
+
+todos = ["apple", "banana"]
+newTodo = "orange"
+
+Bottom:
+[...todos, newTodo]
+// ["apple", "banana", "orange"]
+
+Top:
+[newTodo, ...todos]
+// ["orange", "apple", "banana"]
+
+If each todo is an object like { id: 123, text: "Buy milk" }, then using {todo} inside JSX won’t show the text and will cause React to complain:
+Objects are not valid as a React child (React can’t render raw objects).
+
+If each todo is a string like "Buy milk", then {todo} will render that string fine (no problem).
+
+For debugging you can use JSON.stringify(todo) to see an object’s content.
+
+Examples
+
+todos are objects (your current approach)
+
+const todos = [{ id: 1, text: "Buy milk" }];
+// In render:
+{todos.map(todo => <li key={todo.id}>{todo}</li>)}
+// ❌ React error: "Objects are not valid as a React child"
+
+
+todos are strings
+
+const todos = ["Buy milk"];
+{todos.map((todo, i) => <li key={i}>{todo}</li>)}
+// ✅ Renders "Buy milk"
+
+
+Debugging an object
+
+{todos.map(todo => (
+  <li key={todo.id}>{JSON.stringify(todo)}</li>
+))}
+// ✅ Renders '{"id":1,"text":"Buy milk"}' — useful for debugging only
+
+
+Correct / recommended (destructure for clarity)
+
+{todos.map(({ id, text }) => (
+  <li key={id}>
+    {text}
+    <button onClick={() => deleteTodo(id)}>delete</button>
+  </li>
+))}
+
+Extra tips
+
+Use {todo.text} when your todo items are objects (this is the usual pattern).
+
+Use JSON.stringify(todo) only for debugging — don’t show that to users.
+
+Prefer destructuring in the .map for cleaner code: todos.map(({id, text}) => ...).
+
+Keep key unique and stable (using todo.id is good; don’t use array index unless you must).
+
+
+What is .trim()?
+
+.trim() is a built-in JavaScript string function.
+
+It removes:
+
+spaces at the beginning
+
+spaces at the end
+
+Example:
+
+"   hello ".trim()   // "hello"
+"   apple".trim()    // "apple"
+"banana    ".trim()  // "banana"
+"   ".trim()         // ""
+"".trim()            // ""
+
+
+So .trim() helps to remove useless spaces.
+
+🧠 Why do we use text.trim() in your Todo app?
+
+Imagine the user types only spaces:
+
+"    "
+
+
+That should NOT create a todo.
+
+But without trim:
+
+if (text === "")  // this is false → so it will add an empty todo
+
+
+Because " " !== "".
+
+But with trim:
+
+text.trim() === ""
+
+
+Spaces disappear → becomes "" → so no todo is added.
+
+🟢 Final meaning of this line:
+if (text.trim() === "") return;
+
+
+It means:
+
+👉 If the input is empty OR only spaces, then stop and do nothing.
+
+Want a simple practical demo?
+
+If text = "milk"
+→ text.trim() = "milk"
+→ todo will be added.
+
+If text = " "
+→ text.trim() = ""
+→ todo will NOT be added.

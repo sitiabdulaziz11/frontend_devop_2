@@ -1,0 +1,296 @@
+Todo List App — Step-by-Step Checklist
+1️⃣ Setup
+
+ Create a new React component → TodoApp.jsx
+
+ Import useState from React
+
+2️⃣ State (Data) You Need
+
+You need two pieces of state:
+
+ text → to store what the user types in the input
+
+ todos → array to store all todo items
+
+Example in your mind:
+
+text = "Buy milk"
+todos = ["Buy milk", "Learn React", "Cook food"]
+
+3️⃣ Input Field
+
+ Add an <input> for the user to type a todo
+
+ Connect it to text state → value={text}
+
+ Update state on typing → onChange={(e) => setText(e.target.value)}
+
+4️⃣ Add Button
+
+ Create a button → “Add Todo”
+
+ On click → push the text into the todos array
+
+ Then clear the input field (setText(""))
+
+5️⃣ Display Todo List
+
+ Use .map() to show each todo as a <li>
+
+ Give each <li> a key
+
+key = index (for now OK)
+
+6️⃣ Optional Extra Features
+
+(You can add later)
+
+ Delete a todo
+
+ Edit a todo
+
+ Mark as completed
+
+ Save todos in localStorage
+
+🟩 Simple Visual Checklist
+1. Input → type todo
+2. Button → add todo
+3. List → display todos
+
+What is a Todo List App?
+
+A Todo List App is a small application where the user can:
+
+✔ Add tasks
+
+Example:
+
+“Study React”
+
+“Cook food”
+
+“Pray”
+
+“Buy groceries”
+
+✔ See all tasks in a list
+
+Example:
+
+Study React
+
+Cook food
+
+Buy groceries
+
+✔ (Optional) Delete tasks
+✔ (Optional) Mark tasks as done
+✅ A Todo List App in real life is like:
+➤ A small notepad where you write:
+
+✔ Tasks you need to do
+
+✔ Tasks you finished
+
+✔ Tasks you want to remember
+
+It’s the most common beginner project in React because:
+
+it teaches state
+
+it teaches lists
+
+it teaches events
+
+it teaches conditional rendering
+
+🟦 Very simple example
+
+Imagine this is your Todo app:
+
+Your tasks:
+- Study English
+- Learn React
+- Cook dinner
+
+
+You type in a box → “Go to the market”
+You click “Add” → the list becomes:
+
+Your tasks:
+- Study English
+- Learn React
+- Cook dinner
+- Go to the market
+
+🟢 Why React developers always build a Todo app first?
+
+Because it tests:
+
+Concept	Why it's used
+useState	remember tasks
+map()	show each task
+onClick	add/delete tasks
+input onChange	capture user typing
+keys	render list correctly
+
+It’s a perfect practice project.
+
+
+3️⃣ Edit a todo (optional but useful)
+Step 1: Add edit button
+<li key={todo.id}>
+  {todo.text} 
+  <button onClick={() => editTodo(todo.id)}>Edit</button>
+</li>
+
+Step 2: Define editTodo
+function editTodo(id) {
+  const newText = prompt("Edit todo:"); // simple way
+  if (!newText) return;
+
+  setTodos(todos.map(todo => 
+    todo.id === id ? { ...todo, text: newText } : todo
+  ));
+}
+
+
+map updates only the todo we want
+
+All other todos remain the same
+
+4️⃣ Mark a todo as completed
+
+Add a completed flag to your todo:
+
+setTodos([...todos, { id: Date.now(), text, completed: false }]);
+
+
+Rendering:
+
+<li key={todo.id} style={{ textDecoration: todo.completed ? "line-through" : "none" }}>
+  {todo.text}
+  <button onClick={() => toggleComplete(todo.id)}>
+    {todo.completed ? "Undo" : "Complete"}
+  </button>
+</li>
+
+
+Toggle function:
+
+function toggleComplete(id) {
+  setTodos(todos.map(todo =>
+    todo.id === id ? { ...todo, completed: !todo.completed } : todo
+  ));
+}
+
+5️⃣ Save todos in localStorage
+
+Save automatically whenever todos change:
+
+useEffect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+
+Load from localStorage when app loads:
+
+const [todos, setTodos] = useState(() => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+});
+
+
+If you want, I can make a full working Todo App with:
+
+✅ Add
+✅ Delete
+✅ Edit
+✅ Complete
+✅ Save in localStorage
+
+Todo App Feature Checklist
+1️⃣ Add Todo (Already done)
+
+ Input box for todo text
+
+ Button to add todo
+
+ Add new todo to state array (setTodos([...todos, newTodo]))
+
+ Clear input after adding
+
+2️⃣ Delete a Todo
+
+ Add a delete button next to each todo
+
+ Create deleteTodo(id) function
+
+ Use filter to remove todo with that id:
+
+setTodos(todos.filter(todo => todo.id !== id))
+
+
+ Update state → React re-renders list
+
+3️⃣ Edit a Todo
+
+ Add an edit button next to each todo
+
+ Create editTodo(id) function
+
+ Ask for new text (prompt or input)
+
+ Use map to update only the selected todo:
+
+setTodos(todos.map(todo => todo.id === id ? {...todo, text: newText} : todo))
+
+
+ Update state → React re-renders
+
+4️⃣ Mark as Completed
+
+ Add a completed property to each todo:
+
+{ id: 123, text: "Buy milk", completed: false }
+
+
+ Add a “Complete/Undo” button next to each todo
+
+ Create toggleComplete(id) function
+
+ Use map to toggle completed status:
+
+setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed} : todo))
+
+
+ Update state → React re-renders
+
+ Show completed visually (line-through or different color)
+
+5️⃣ Save Todos in localStorage
+
+ On first load, read todos from localStorage:
+
+const [todos, setTodos] = useState(() => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+});
+
+
+ Use useEffect to save todos whenever state changes:
+
+useEffect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+6️⃣ Optional UI Enhancements
+
+ Style completed todos differently (line-through or gray text)
+
+ Disable Add button if input is empty
+
+ Confirm before deleting (optional)
+ 
