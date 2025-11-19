@@ -4,14 +4,14 @@ import { useState } from "react";
 export default function TodoApp() {
     const [text, setText] = useState("");  // text starts empty
     const [todos, setTodos] = useState([]);  // todos is an empty array
+    const [ediId, setEditId] = useState(null);
+    const [editText, setEditText] = useState("")
 
     function AddTodoList() {
         // setTodos([text, ...todos]);  // add new todo to array
-
         if (text.trim() === "") {
             return; // do nothing
         }
-        
         setTodos([{id: Date.now(), text }, ...todos]);  // add new todo to array
         setText("");  // clear input
     }
@@ -22,8 +22,20 @@ export default function TodoApp() {
     function deleteTodo(id){
         setTodos(todos.filter((todo) => todo.id !== id));
     }
+
+    function startEdit(todo) {
+        setEditId(todo.id);
+        setEditText(todo.text);
+    }
     
-    // function editTodo()
+    // function editTodo(id) {
+    function saveEdit(id) {
+        // const newText = prompt("edit todo");
+
+        // setTodos(todos.map(todo => todo.id === id ? {...todo, text: newText} : todo))
+        setTodos(todos.map(todo => todo.id === id ? {...todo, text: editText} : todo));
+        setEditId(null);
+    }
 
     return (
         <>
@@ -42,8 +54,18 @@ export default function TodoApp() {
                         <li key={todo.id}>
                             {/* {todo} */}
                             {todo.text}
-                            <button onClick={() => deleteTodo(todo.id)}>delete</button>
-                            <button>edit</button>
+                            {ediId === todo.id ? (
+                                <>
+                                  <input value={editText}
+                                  onChange={(e) => setEditText(e.target.  value)} />
+                                  <button onClick={() => saveEdit(todo.id)} >Save</button>
+                                </>
+                            ) : (
+                                <>
+                                  <button onClick={() => deleteTodo(todo.id)}>delete</button>
+                                  <button onClick={() => startEdit(todo)}>edit</button>
+                                </>
+                            )}
                         </li>
                         ))                              
                 }

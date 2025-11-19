@@ -545,3 +545,21 @@ If text = "milk"
 If text = " "
 → text.trim() = ""
 → todo will NOT be added.
+
+What is prompt()?
+
+prompt() is a built-in JavaScript browser function that opens a popup input box.
+
+Example:
+
+const name = prompt("Enter your name:");
+
+
+It shows a popup → user types something → returns that value.
+
+BUT:
+
+❌ It looks ugly
+❌ It pauses the whole page
+❌ It is not good for React apps
+
