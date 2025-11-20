@@ -12,7 +12,8 @@ export default function TodoApp() {
         if (text.trim() === "") {
             return; // do nothing
         }
-        setTodos([{id: Date.now(), text }, ...todos]);  // add new todo to array
+        // setTodos([{id: Date.now(), text }, ...todos]);  // add new todo to array
+        setTodos([{id: Date.now(), text, completed: false }, ...todos ]);  // To add completed toggle
         setText("");  // clear input
     }
     // function handleChange(e) {
@@ -25,7 +26,7 @@ export default function TodoApp() {
 
     function startEdit(todo) {
         setEditId(todo.id);
-        setEditText(todo.text);
+        setEditText(todo.text);  // loads the OLD text into the input box
     }
     
     // function editTodo(id) {
@@ -34,8 +35,16 @@ export default function TodoApp() {
 
         // setTodos(todos.map(todo => todo.id === id ? {...todo, text: newText} : todo))
         setTodos(todos.map(todo => todo.id === id ? {...todo, text: editText} : todo));
-        setEditId(null);
+        // setEditId(null);
     }
+
+    function toggleCompleted(id) {
+        setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed } : todo,
+        console.log("todo", todo)
+        ))
+        
+    }
+
 
     return (
         <>
@@ -43,7 +52,6 @@ export default function TodoApp() {
             onChange={(e) => setText(e.target.value)}
             // onChange={handleChange}
              />
-            
             <button onClick={AddTodoList}>Add Todo</button>
 
             <ul>
@@ -51,7 +59,7 @@ export default function TodoApp() {
                     // todos.map((todo, index) => (
                     todos.map((todo) => (
                         // <li key={index}>
-                        <li key={todo.id}>
+                        <li key={todo.id} style={{ textDecoration: todo.completed ? "line-through": "none" }}>
                             {/* {todo} */}
                             {todo.text}
                             {ediId === todo.id ? (
@@ -64,6 +72,8 @@ export default function TodoApp() {
                                 <>
                                   <button onClick={() => deleteTodo(todo.id)}>delete</button>
                                   <button onClick={() => startEdit(todo)}>edit</button>
+                                  {/* <button onClick={() => toggleCompleted(todo.id)}> {todo.completed ? "Undo" : completed} </button> */}
+                                  <button onClick={() => toggleCompleted(todo.id)}> Completed </button>
                                 </>
                             )}
                         </li>
