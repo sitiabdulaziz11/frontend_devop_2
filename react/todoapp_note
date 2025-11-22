@@ -295,3 +295,92 @@ useEffect(() => {
 
  Confirm before deleting (optional)
  
+
+ You said:
+ok, setTodos([...todos, newTodo]);
+console.log("todos", todos); React does not instantly update state., so what is the d/c in useEffect useEffect(() => {
+  console.log("Updated todos:", todos);
+}, [todos]); , why it abled to loade updated array?
+You said:
+ how useEffect get or know todos, i confused b/c not passed todos, import { useEffect } from "react"; 
+
+useEffect(() => {
+  console.log("Updated todos:", todos);
+}, [todos]); even though i try to print in side map, with a function i got TodoApp.jsx:46 Uncaught ReferenceError: todo is not defined
+    at toggleCompleted (TodoApp.jsx:46:29)
+    at onClick , e.g in this func function toggleCompleted(id) {
+        setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed } : todo,
+        console.log("todo", todo)
+        ))
+        
+    }, how useEffect know todos?
+You said:
+ok, useEffect is inside the same function
+
+so useEffect “remembers” todos, if that is the case, why we need to use useEffect why not just     console.log("todos", todos); what is the d/c? 2 i think if useEffect were other normal func, not possible to remember todos, right? what is the d/c? 
+You said:
+how useEffect knows React finishes updating state?
+You said:
+Because React itself calls useEffect AFTER it finishes updating., ok sorry , after react finish updating why it call it/useeffect? mean  React re-renders the component
+5. React says: “Okay, I’m done. Now run all useEffects.” like it already update the state , also render it, why again call it/ useEffect?, what is the use effect work, i think it not particpage on rendering, updating like that?
+You said:
+ok, if i understand react well, it works in two way or it divide it's work in two satge the first for update and render, after it completed , 2nd then the effect of the change, like to see the result or save to database or like that with effect right, with e.g if data is changed , it is changed with usestate, but not saved in usestate, but saved in useeffect? right?
+You said:
+when i did function AddTodoList() {
+        // setTodos([text, ...todos]);  // add new todo to array
+        if (text.trim() === "") {
+            return; // do nothing
+        }
+        // setTodos([{id: Date.now(), text }, ...todos]);  // add new todo to array
+        setTodos([{id: Date.now(), text, completed: false }, ...todos ]);  // To add completed toggle
+        setText("");  // clear input
+        // console.log("todos", todos); // here prints old value
+            // because React does not instantly update state.
+            //  runs before React updates state
+    }
+    console.log("todos", todos); out side of func it print each letter i type, why is it?  2 you said ❗ Why FIRST click didn’t show a change?
+
+Because your text was always "Completed"
+You never checked:, but even  <button onClick={() => toggleCompleted(todo.id)}> {todo.completed ? " Completed" :"Not completed "} </button> with     function toggleCompleted(id) {
+        // setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed } : todo,
+        // console.log("todo", todo)
+        // ))
+
+        setTodos(
+            todos.map(todo => {
+                if (todo.id === id) {
+                console.log("todo before:", todo);
+                return { ...todo, completed: !todo.completed };
+                }
+                return todo;
+            })
+            );
+    } i got false like this todo before: 
+{id: 1763811138304, text: 'jljhkl', completed: false}
+completed
+: 
+false
+id
+: 
+1763811138304
+text
+: 
+"jljhkl"
+[[Prototype]]
+: 
+Object after 1 click
+You said:
+ok iused  useEffect(() => {
+        console.log("Updated todos:", todos);  // here updated value Because 
+        // useEffect runs after React finishes updating state and re-rendering.
+    }, [todos]); above toggle function and completed bbuttun, but whe i click completed it prints true like this Updated todos: 
+[{…}]
+0
+: 
+{id: 1763811683736, text: 'uioyuio', completed: true}
+length
+: 
+1
+[[Prototype]]
+: 
+Array(0), it is all code runs when some thing done withn a func or why?
