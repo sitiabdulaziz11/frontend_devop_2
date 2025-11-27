@@ -89,3 +89,91 @@ setTodos(...todos, text)	❌ wrong
                 <button onClick={() => deleteTodo(todo.id)}>delete</button>
 But in your .map, each todo seems to be a string (because you do {todo} directly).
  Strings don’t have an id property, so todo.id is undefined.
+
+ 3 
+
+npm WARN EBADENGINE Unsupported engine
+You are using Node.js 18.19.1. Vite requires Node.js version 20.19+ or 22.12+
+TypeError: crypto.hash is not a function
+
+✅ Your issue is 100% caused by old Node.js (v18.19.1)
+
+Vite requires Node 20.19+ or 22.12+, but you are using Node 18.
+That’s why you see:
+
+
+Vite will NOT run on Node 18.
+
+✅ ✔ FIX: Upgrade Node.js to Node 22 LTS
+
+Since you are on Ubuntu (WSL), here is the correct way:
+
+🔧 STEP 1 — Remove old Node
+
+(Only removes the old version, not your projects)
+
+sudo apt remove nodejs
+
+🔧 STEP 2 — Install Node Version Manager (NVM)
+
+NVM lets you switch Node versions easily.
+
+Run:
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+
+Then restart terminal:
+
+exit
+
+
+Open terminal again and verify:
+
+command -v nvm
+
+
+If it prints nvm, good.
+
+🔧 STEP 3 — Install Node 22 (recommended)
+nvm install 22
+nvm use 22
+
+
+Make it default:
+
+nvm alias default 22
+
+
+Check version:
+
+node -v
+
+
+It should show:
+
+v22.x.x
+
+🔧 STEP 4 — Re-run your Vite React app
+
+Go to your project:
+
+cd /home/alhemdulillah/projects/frontend_devop_2/react/react
+
+
+Then install dependencies again (because old ones used Node 18):
+
+rm -rf node_modules
+npm install
+
+
+Then run:
+
+npm run dev
+
+🎉 After upgrading Node → Vite will work 100% without errors
+If you want, I can:
+
+✅ check your Node version
+✅ fix your Vite setup
+✅ create a clean React project for you

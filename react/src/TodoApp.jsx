@@ -20,7 +20,7 @@ export default function TodoApp() {
             // because React does not instantly update state.
             //  runs before React updates state
     }
-    console.log("todos", todos);
+    // console.log("todos", todos);
 
     useEffect(() => {
         console.log("Updated todos:", todos);  // here updated value Because 
