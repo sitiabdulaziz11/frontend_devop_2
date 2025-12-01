@@ -49,21 +49,47 @@ export default function TodoApp() {
         setEditId(null);
     }
 
-    function toggleCompleted(id) {
-        // setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed } : todo,
-        // console.log("todo", todo)
-        // ))
+    // function toggleCompleted(id) {
+    //     // setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed } : todo,
+    //     // console.log("todo", todo)
+    //     // ))
 
-        setTodos(
-            todos.map(todo => {
-                if (todo.id === id) {
-                console.log("todo before:", todo);
-                return { ...todo, completed: !todo.completed };
-                }
-                return todo;
-            })
-            );
+    //     setTodos(
+    //         todos.map(todo => {
+    //             if (todo.id === id) {
+    //             console.log("todo before:", todo);
+    //             return { ...todo, completed: !todo.completed };
+    //             }
+    //             return todo;
+    //         })
+    //         );
+    // }
+
+    function toggleCompleted(id) {
+    const updatedTodos = todos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    );
+
+    const updatedTodo = updatedTodos.find(todo => todo.id === id); //to see only the updated item
+    console.log("updated tog todo:", updatedTodo);  // updated item only 
+    console.log("updated togs todo:", updatedTodos);   // all current items
+
+    setTodos(updatedTodos);
     }
+
+    useEffect(() => {
+    const storedTodos = localStorage.getItem('todos');
+    if (storedTodos) setTodos(JSON.parse(storedTodos));
+    }, []);
+
+    // const [todos, setTodos] = useState(() => {
+    // const saved = localStorage.getItem("todos");
+    // return saved ? JSON.parse(saved) : [];
+    // }); 
+    
+    useEffect(() => {
+        localStorage.setItem("todos", JSON.stringify(todos));
+        }, [todos]);
 
 
     return (

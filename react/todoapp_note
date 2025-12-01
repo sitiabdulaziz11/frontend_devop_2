@@ -46,13 +46,7 @@ key = index (for now OK)
 
 (You can add later)
 
- Delete a todo
 
- Edit a todo
-
- Mark as completed
-
- Save todos in localStorage
 
 🟩 Simple Visual Checklist
 1. Input → type todo
@@ -1187,3 +1181,138 @@ Typing in input	text changes	re-render → log runs
 Clicking add	todos changes	re-render → log runs
 Clicking complete	todos changes	re-render → log runs
 Logging in the BODY of a component always runs on every re-render.
+
+How can I see all todos inside toggleCompleted? Aren’t we only passing the id?”
+
+Because toggleCompleted is not receiving todos as arguments — it is closing over the current state.
+
+Meaning:
+
+function toggleCompleted(id) {
+    // todos is available here automatically
+    // because it comes from React state (useState)
+}
+
+
+React gives your function access to the current todos array through closure, even if you only pass id.
+
+So inside:
+
+todos.map(...)
+
+
+you still have access to all todos, not only the one with the matching id.
+
+✅ Why you can still see every todo in .map()
+
+Because map() always loops through the entire array.
+
+Example:
+
+todos = [
+  {id: 1, completed: false},
+  {id: 2, completed: true},
+  {id: 3, completed: false}
+];
+
+
+When you do:
+
+todos.map(todo => { ... })
+
+
+React runs your callback 3 times, once for each todo.
+
+You’re not passing the todos into toggleCompleted —
+you’re reading them from state.
+
+❗ **You are NOT passing a todo to toggleCompleted.
+
+You are passing only the id.**
+
+React state (todos) is still visible because of this pattern:
+
+const [todos, setTodos] = useState(initialValue);
+
+
+Any function defined inside the component can automatically "see" this state.
+
+That’s how React works.
+
+✔ Final Summary
+
+toggleCompleted(id) only receives id
+
+But todos is available because it's a state variable in the same component
+
+So inside the function you still have access to the entire todos list
+
+.map() loops over all todos
+
+You can choose to log:
+
+the entire updated array → console.log(updatedTodos)
+
+
+1️⃣ What does “closing over the current state” mean?
+
+It means:
+
+👉 Your function remembers the values that existed where it was created.
+
+Example:
+
+const [todos, setTodos] = useState([]);
+
+function toggleCompleted(id) {
+    console.log(todos); // ← You can access todos here
+}
+
+
+Even though toggleCompleted() receives only id,
+it can still use todos because:
+
+✔ The function was created inside the component,
+✔ and the component has a variable called todos.
+
+So JavaScript automatically lets toggleCompleted “remember” or “capture” that variable.
+
+This is called a closure.
+
+2️⃣ What is a closure (simple explanation)?
+
+A closure is when a function:
+
+has access to its own variables,
+
+AND the variables outside of it,
+
+even after the outer code has finished running.
+
+Example:
+
+let x = 10;
+
+function showX() {
+  console.log(x);
+}
+
+showX(); // prints 10
+
+
+The function showX remembers the value x.
+This “memory” is called a closure.
+
+In React:
+
+Your component runs once, defining:
+
+todos
+setTodos
+toggleCompleted
+
+
+Then, even later, when the user clicks a button,
+
+toggleCompleted still remembers the value of todos.
+
