@@ -4,9 +4,16 @@ import { useEffect } from "react";
 
 export default function TodoApp() {
     const [text, setText] = useState("");  // text starts empty
-    const [todos, setTodos] = useState([]);  // todos is an empty array
+    // const [todos, setTodos] = useState([]);  // todos is an empty array
     const [ediId, setEditId] = useState(null);
     const [editText, setEditText] = useState("")
+
+     const [todos, setTodos] = useState(() => {
+    // const locStorage = (todos) => {
+      const saved = localStorage.getItem("todos");  // to read from local storage
+      return saved ? JSON.parse(saved) : [];
+    });
+    // };
 
     function AddTodoList() {
         // setTodos([text, ...todos]);  // add new todo to array
@@ -46,7 +53,7 @@ export default function TodoApp() {
 
         // setTodos(todos.map(todo => todo.id === id ? {...todo, text: newText} : todo))
         setTodos(todos.map(todo => todo.id === id ? {...todo, text: editText} : todo));
-        setEditId(null);
+        setEditId(null);  // close editing mode
     }
 
     // function toggleCompleted(id) {
@@ -78,19 +85,16 @@ export default function TodoApp() {
     }
 
     useEffect(() => {
-    const storedTodos = localStorage.getItem('todos');
-    if (storedTodos) setTodos(JSON.parse(storedTodos));
-    }, []);
-
-    // const [todos, setTodos] = useState(() => {
-    // const saved = localStorage.getItem("todos");
-    // return saved ? JSON.parse(saved) : [];
-    // }); 
-    
-    useEffect(() => {
-        localStorage.setItem("todos", JSON.stringify(todos));
+        localStorage.setItem("todos", JSON.stringify(todos)); // to save to local storage
         }, [todos]);
 
+    // useEffect(() => {
+    // const storedTodos = localStorage.getItem('todos');
+    // if (storedTodos) setTodos(JSON.parse(storedTodos));  // to read from local 
+    // // storage, but this make double rendering
+    // }, []);
+
+   
 
     return (
         <>
