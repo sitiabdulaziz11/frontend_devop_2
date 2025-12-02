@@ -4,15 +4,22 @@ import { useEffect } from "react";
 
 export default function TodoApp() {
     const [text, setText] = useState("");  // text starts empty
-    // const [todos, setTodos] = useState([]);  // todos is an empty array
+    const [todos, setTodos] = useState([]);  // todos is an empty array
     const [ediId, setEditId] = useState(null);
     const [editText, setEditText] = useState("")
 
-     const [todos, setTodos] = useState(() => {
-    // const locStorage = (todos) => {
-      const saved = localStorage.getItem("todos");  // to read from local storage
-      return saved ? JSON.parse(saved) : [];
-    });
+
+    // const [todos, setTodos] = useState(() => {
+    // // const locStorage = (todos) => {
+    //     try {
+    //         const saved = localStorage.getItem("todos");  // to read from local storage on
+    //         // the first rendering
+    //         return saved ? JSON.parse(saved) : [];
+    //     } catch (error) {
+    //         console.error("Error parsing todos:", error);
+    //         return [];
+    //     }
+    // });
     // };
 
     function AddTodoList() {
@@ -88,11 +95,11 @@ export default function TodoApp() {
         localStorage.setItem("todos", JSON.stringify(todos)); // to save to local storage
         }, [todos]);
 
-    // useEffect(() => {
-    // const storedTodos = localStorage.getItem('todos');
-    // if (storedTodos) setTodos(JSON.parse(storedTodos));  // to read from local 
-    // // storage, but this make double rendering
-    // }, []);
+    useEffect(() => {
+    const storedTodos = localStorage.getItem('todos');
+    if (storedTodos) setTodos(JSON.parse(storedTodos));  // to read from local storage on the second  rendering
+    // mean but this make double rendering
+    }, []);
 
    
 
