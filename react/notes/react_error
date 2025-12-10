@@ -191,3 +191,21 @@ But in your file, React reaches AddTodoList() and deleteTodo() and toggleComplet
 and inside them you use todos, but React hasn't created todos state yet.
 
 So React crashes → blank screen → error boundary message.
+
+5
+
+i got M [vite] Internal server error: /home/alhemdulillah/projects/frontend_devop_2/react/src/TodoApp.jsx: 'return' outside of function. (106:4)
+
+  104 |    
+  105 |
+> 106 |     return (
+      |     ^
+  107 |         <>
+  108 |             <input value={text}
+  109 |             onChange={(e) => setText(e.target.value)}
+  Plugin: vite:react-babel
+  File: /home/alhemdulillah/projects/frontend_devop_2/react/src/TodoApp.jsx:106:4
+
+  b/c i closed the main app component some where before completed.
+
+  

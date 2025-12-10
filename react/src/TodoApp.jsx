@@ -4,23 +4,23 @@ import { useEffect } from "react";
 
 export default function TodoApp() {
     const [text, setText] = useState("");  // text starts empty
-    const [todos, setTodos] = useState([]);  // todos is an empty array
+    // const [todos, setTodos] = useState([]);  / todos is an empty array
     const [ediId, setEditId] = useState(null);
     const [editText, setEditText] = useState("")
 
 
-    // const [todos, setTodos] = useState(() => {
-    // // const locStorage = (todos) => {
-    //     try {
-    //         const saved = localStorage.getItem("todos");  // to read from local storage on
-    //         // the first rendering
-    //         return saved ? JSON.parse(saved) : [];
-    //     } catch (error) {
-    //         console.error("Error parsing todos:", error);
-    //         return [];
-    //     }
-    // });
-    // };
+    const [todos, setTodos] = useState(() => {
+    // const locStorage = (todos) => {
+        try {
+            const saved = localStorage.getItem("todos");  // to read from local storage on
+            // the first rendering
+            return saved ? JSON.parse(saved) : [];  //Read the string If exists → convert string → array then Return array.
+        } catch (error) {
+            console.error("Error parsing todos:", error);
+            return [];
+        }
+    });
+    
 
     function AddTodoList() {
         // setTodos([text, ...todos]);  // add new todo to array
@@ -91,15 +91,17 @@ export default function TodoApp() {
     setTodos(updatedTodos);
     }
 
-    useEffect(() => {
-        localStorage.setItem("todos", JSON.stringify(todos)); // to save to local storage
-        }, [todos]);
+    // useEffect(() => { // this not work for reading, b/c the intial empty useState([]) overwrite the saved todos. so for load/read local storage , we use lazitialzer ueState function above.
+    //     const storedTodos = localStorage.getItem('todos');
+    //     if (storedTodos) setTodos(JSON.parse(storedTodos));  // to read from local storage on the second  rendering
+    //     // mean but this make double rendering, b/c on  first react render, after it finish useeffect again run/render to load/read loacl todos.
+    //     }, []);
+
 
     useEffect(() => {
-    const storedTodos = localStorage.getItem('todos');
-    if (storedTodos) setTodos(JSON.parse(storedTodos));  // to read from local storage on the second  rendering
-    // mean but this make double rendering
-    }, []);
+        localStorage.setItem("todos", JSON.stringify(todos)); // Convert array → to string to save inside local storage.
+        }, [todos]);
+
 
    
 

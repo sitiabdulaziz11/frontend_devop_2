@@ -1,0 +1,2220 @@
+
+If you want to print the updated value immediately after toggling without using useEffect, you need to understand something important:
+
+❗ React state updates (setTodos) are asynchronous
+
+That means setTodos() does not update todos immediately, so you cannot read the updated value right after calling setTodos() in the same function.
+
+✅ Solution: Compute the updated todo before calling setTodos, then log it
+
+You can do this:
+
+function toggleCompleted(id) {
+    const updatedTodos = todos.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    );
+
+    const updatedTodo = updatedTodos.find(todo => todo.id === id);
+
+    console.log("updated todo:", updatedTodo);
+
+    setTodos(updatedTodos);
+}
+
+👍 What this does:
+
+Creates a new updatedTodos array
+
+Finds the updated <todo> inside it
+
+Prints the new value before sending it to state
+
+Then sets the new state
+
+✔ Example Output
+
+If the old value was:
+
+completed: false
+
+
+Your log will show:
+
+updated todo: { id: 1764580220739, text: "jlj", completed: true }
+
+❗ Why this works
+
+Because we log the new object we created, not waiting for React to update state.
+
+Great question!
+You can print updatedTodos directly — there is no problem with that.
+
+But the difference is what you want to see in the console.
+
+✅ 1. If you want to see only the updated item → use .find()
+const updatedTodo = updatedTodos.find(todo => todo.id === id);
+console.log("updated todo:", updatedTodo);
+
+Output:
+{id: 123, text:"hi", completed: true}
+
+
+👉 This shows only the todo you toggled.
+
+✅ 2. If you log the whole updatedTodos array → you see everything
+console.log("updated todos:", updatedTodos);
+
+Output:
+[
+  {id: 1, text:"A", completed:false},
+  {id: 2, text:"B", completed:true},   <— updated item
+  {id: 3, text:"C", completed:false}
+]
+
+
+👉 This prints the entire list, not just the updated one.
+
+🎯 Why I used .find()
+
+Because in your question you said:
+
+"i want to print updated value"
+
+So I assumed you want to print only the updated todo, not the entire list.
+
+✔ If printing the whole array is enough for you:
+
+Then you can do this:
+
+function toggleCompleted(id) {
+  const updatedTodos = todos.map(todo =>
+    todo.id === id ? { ...todo, completed: !todo.completed } : todo
+  );
+
+  console.log("updated todos:", updatedTodos);
+
+  setTodos(updatedTodos);
+}
+
+
+✔ Works perfectly
+✔ No need for find()
+
+
+Ahh I see what you're confused about — very common React beginner question.
+Let me explain clearly 👇
+
+❓ “How can I see all todos inside toggleCompleted? Aren’t we only passing the id?”
+
+Because toggleCompleted is not receiving todos as arguments — it is closing over the current state.
+
+Meaning:
+
+function toggleCompleted(id) {
+    // todos is available here automatically
+    // because it comes from React state (useState)
+}
+
+
+React gives your function access to the current todos array through closure, even if you only pass id.
+
+So inside:
+
+todos.map(...)
+
+
+you still have access to all todos, not only the one with the matching id.
+
+✅ Why you can still see every todo in .map()
+
+Because map() always loops through the entire array.
+
+Example:
+
+todos = [
+  {id: 1, completed: false},
+  {id: 2, completed: true},
+  {id: 3, completed: false}
+];
+
+
+When you do:
+
+todos.map(todo => { ... })
+
+
+React runs your callback 3 times, once for each todo.
+
+You’re not passing the todos into toggleCompleted —
+you’re reading them from state.
+
+❗ **You are NOT passing a todo to toggleCompleted.
+
+You are passing only the id.**
+
+React state (todos) is still visible because of this pattern:
+
+const [todos, setTodos] = useState(initialValue);
+
+
+Any function defined inside the component can automatically "see" this state.
+
+That’s how React works.
+
+✔ Final Summary
+
+toggleCompleted(id) only receives id
+
+But todos is available because it's a state variable in the same component
+
+So inside the function you still have access to the entire todos list
+
+.map() loops over all todos
+
+You can choose to log:
+
+the entire updated array → console.log(updatedTodos)
+
+only the updated todo → updatedTodos.find(...)
+
+1️⃣ What does “closing over the current state” mean?
+
+It means:
+
+👉 Your function remembers the values that existed where it was created.
+
+Example:
+
+const [todos, setTodos] = useState([]);
+
+function toggleCompleted(id) {
+    console.log(todos); // ← You can access todos here
+}
+
+
+Even though toggleCompleted() receives only id,
+it can still use todos because:
+
+✔ The function was created inside the component,
+✔ and the component has a variable called todos.
+
+So JavaScript automatically lets toggleCompleted “remember” or “capture” that variable.
+
+This is called a closure.
+
+2️⃣ What is a closure (simple explanation)?
+
+A closure is when a function:
+
+has access to its own variables,
+
+AND the variables outside of it,
+
+even after the outer code has finished running.
+
+Example:
+
+let x = 10;
+
+function showX() {
+  console.log(x);
+}
+
+showX(); // prints 10
+
+
+The function showX remembers the value x.
+This “memory” is called a closure.
+
+In React:
+
+Your component runs once, defining:
+
+todos
+setTodos
+toggleCompleted
+
+
+Then, even later, when the user clicks a button,
+
+toggleCompleted still remembers the value of todos.
+
+3️⃣ Why you got this warning:
+[Violation] Permissions policy violation: unload is not allowed in this document.
+
+✔ Meaning:
+
+The browser is telling you:
+
+“Some script is trying to use the unload event, but this page does not allow it.”
+
+Why?
+
+Modern browsers block or restrict:
+
+window.onbeforeunload
+
+window.onunload
+
+Because these events cause:
+
+tab closing issues
+
+performance problems
+
+unexpected browser behavior
+
+💡 Where it usually comes from:
+
+This is NOT your React code.
+
+It usually comes from:
+
+browser extensions
+
+React dev tools
+
+a script injected by your environment
+
+some library trying to use unload
+
+✔ It's harmless
+
+You can safely ignore it.
+It will not break your React app.
+
+✔ Summary
+🔹 Closure = A function remembers variables outside it
+🔹 toggleCompleted() can access todos because of closure
+🔹 The warning is from browser permissions, not your code
+
+Great question — and you're right to think carefully here.
+
+✅ Closures exist in many languages — not only JavaScript
+
+Closures are NOT a JavaScript-only concept.
+
+They also exist in:
+
+✔ Python
+✔ JavaScript
+✔ Swift
+✔ Kotlin
+✔ Go
+✔ Rust
+✔ Ruby
+✔ Lua
+✔ Haskell
+✔ Lisp
+✔ TypeScript (of course)
+❌ Languages like C do NOT have closures (unless using function pointers in special ways)
+
+C is a low-level language.
+Functions in C do not automatically remember variables outside.
+
+So:
+
+JavaScript → Yes closures
+
+Python → Yes closures
+
+C → No
+
+C++ → Yes (with lambdas)
+
+Java → Yes (with lambdas)
+
+📌 Examples from different languages
+1️⃣ JavaScript — closure example
+function outer() {
+    let x = 10;
+    return function inner() {
+        console.log(x); // closure captures x
+    };
+}
+
+const fn = outer();
+fn();  // prints 10
+
+2️⃣ Python — closure example
+
+Yes, Python has closures:
+
+def outer():
+    x = 10
+    def inner():
+        print(x)  # closure captures x
+    return inner
+
+fn = outer()
+fn()  # prints 10
+
+3️⃣ C — NO closure
+
+C cannot do this:
+
+int outer() {
+    int x = 10;
+    int inner() {
+        printf("%d", x); // ❌ not allowed
+    }
+}
+
+
+This simply does not exist in C.
+
+📌 Why?
+
+Because:
+
+JavaScript, Python, etc. have functions as first-class citizens
+
+They can capture local variables
+
+They store the environment when returning a function
+
+C does not.
+
+🎉 So your understanding is correct: closures are common in modern languages, not just JS.
+
+Alhamdulillah! 🎉 Great progress! Now, to handle saving todos in localStorage, here’s a clear checklist you can follow step by step. This is tailored for your React todo app.
+
+Checklist / To-Do for Saving Todos in localStorage
+1️⃣ Load todos from localStorage when app starts
+
+On component mount (e.g., in useEffect with empty dependency array []), check if todos exist in localStorage.
+
+If yes → load them into state.
+
+If no → start with empty array or default todos.
+
+useEffect(() => {
+  const storedTodos = localStorage.getItem('todos');
+  if (storedTodos) setTodos(JSON.parse(storedTodos));
+}, []);
+
+2️⃣ Save todos to localStorage whenever they change
+
+Watch the todos state.
+
+On every change, store the updated array as a JSON string in localStorage.
+
+useEffect(() => {
+  localStorage.setItem('todos', JSON.stringify(todos));
+}, [todos]);
+
+
+This automatically saves after add, delete, edit, or toggleCompleted.
+
+3️⃣ Handle adding a new todo
+
+After adding a todo, todos state updates → useEffect above saves it automatically.
+
+function addTodo(newTodo) {
+  setTodos([...todos, newTodo]);
+}
+
+4️⃣ Handle editing a todo
+
+When you edit a todo (change text), update todos state.
+
+useEffect will save automatically.
+
+function editTodo(id, newText) {
+  setTodos(todos.map(todo => todo.id === id ? {...todo, text: newText} : todo));
+}
+
+5️⃣ Handle deleting a todo
+
+Remove todo from state → useEffect saves automatically.
+
+function deleteTodo(id) {
+  setTodos(todos.filter(todo => todo.id !== id));
+}
+
+6️⃣ Handle marking todo as completed
+
+Toggle completed property → state updates → useEffect saves.
+
+function toggleCompleted(id) {
+  setTodos(todos.map(todo => todo.id === id ? {...todo, completed: !todo.completed} : todo));
+}
+
+7️⃣ Optional: Clear all todos
+
+Useful for reset button.
+
+function clearTodos() {
+  setTodos([]);
+  localStorage.removeItem('todos');
+}
+
+8️⃣ Optional: Data validation
+
+Make sure data retrieved from localStorage is valid JSON.
+
+Avoid errors if localStorage is empty or corrupted.
+
+const storedTodos = localStorage.getItem('todos');
+try {
+  if (storedTodos) setTodos(JSON.parse(storedTodos));
+} catch (error) {
+  console.error("Invalid todos in localStorage");
+  setTodos([]);
+}
+
+✅ Summary
+
+Load todos from localStorage on mount.
+
+Save todos to localStorage on any state change.
+
+State updates automatically when you add, delete, edit, or toggle todos.
+
+Optionally clear todos and validate data.
+
+✅ 1. The Difference Between Your Commented & Un-commented Code
+
+You have two ways to load todos from localStorage.
+
+A) The useEffect version (your un-commented code)
+useEffect(() => {
+  const storedTodos = localStorage.getItem('todos');
+  if (storedTodos) setTodos(JSON.parse(storedTodos));
+}, []);
+
+✔ When does this run?
+
+ONLY once, when the component first loads (mounts).
+
+✔ Flow:
+
+React loads your component
+
+React first sets todos = [] (empty)
+
+THEN useEffect runs → loads todos from localStorage
+
+Updates state
+
+This works fine, but involves two renders.
+
+B) The initializer version (your commented code) — BETTER
+const [todos, setTodos] = useState(() => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+});
+
+✔ When does this run?
+
+BEFORE the component renders
+
+ONLY on first render
+
+✔ Why this is better?
+
+Because React reads localStorage before creating the initial state.
+
+This avoids an extra render.
+
+🔥 Example:
+
+If localStorage has:
+
+[
+  { id: 1, text: "Learn React", completed: false }
+]
+
+
+Then state starts like:
+
+todos = [
+  { id: 1, text: "Learn React", completed: false }
+]
+
+
+Immediately on first render.
+
+⭐ Which one should you use?
+✔ Recommended (BEST APPROACH)
+
+Use the commented version inside useState:
+
+const [todos, setTodos] = useState(() => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+});
+
+
+Then keep your saving useEffect:
+
+useEffect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+🔍 2. Where is localStorage saved? How to view it?
+
+It's saved in your browser, NOT in your file system.
+
+To view it:
+
+In Chrome
+
+Right-click → Inspect
+
+Go to Application tab
+
+Left menu → Storage → Local Storage
+
+Click on your project domain (localhost:3000)
+
+Look for a key named todos
+
+You will see something like:
+
+Key: "todos"
+Value: "[{ ... your todos ... }]"
+
+📍 Location on disk?
+
+There is no physical “file” like:
+
+C:\Users\You\localstorage.json
+
+
+Browsers store it inside their own internal storage database (IndexedDB file system), but you should not access it manually.
+
+You only access it through:
+
+localStorage.setItem(...)
+localStorage.getItem(...)
+
+🧠 Summary
+✔ Two ways to load from localStorage:
+Method	When It Runs	Recommended?	Why
+useEffect load	After first render	Okay	Causes 2 renders
+useState initializer	Before first render	⭐ Best	Cleaner & avoids extra render
+✔ Where is it stored?
+
+Inside browser localStorage, viewable in browser devtools → Application.
+
+If you want, I can give you a fully cleaned-up final todo component with:
+
+load from localStorage
+
+save to localStorage
+
+add
+
+edit
+
+delete
+
+toggle
+
+
+✅ 1. What does “before render” and “after render” mean?
+
+Think like this:
+
+Your React component goes through steps:
+
+🟦 Step 1 → React decides what your initial state is
+
+(THIS is what we mean by before render)
+
+Example:
+
+const [todos, setTodos] = useState(() => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+});
+
+
+Here React says:
+
+"Before I show anything on the screen, let me check localStorage and load todos."
+
+So the first render already has your todos.
+
+🟩 Step 2 → React shows the UI (first render)
+
+Now the component appears on the screen.
+
+🟧 Step 3 → After the UI appears, useEffect runs
+
+(THIS is what we mean by after render)
+
+Example:
+
+useEffect(() => {
+  const saved = localStorage.getItem("todos");
+  setTodos(JSON.parse(saved));
+}, []);
+
+
+Here the UI shows FIRST (maybe with empty todos).
+THEN React loads localStorage and updates the state.
+
+This causes a second render.
+
+🎯 Direct Answer to Your Question
+❓ Is it possible to load the todos on the first render without useState initializer?
+
+No.
+If you use only useEffect, it will always run after first render, never before.
+
+So you get this:
+
+Render → (todos are empty)
+
+useEffect runs → loads todos → (causes second render)
+
+⭐ The useState initializer is the ONLY way to load data BEFORE first render.
+
+That’s why we recommend:
+
+const [todos, setTodos] = useState(() => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+});
+
+
+This runs before React draws anything.
+
+✅ 2. Do you need a “Save” button to save to localStorage?
+❌ NO — you do NOT need a save button.
+
+Your code already automatically saves:
+
+useEffect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+
+This means:
+
+Whenever:
+
+you add a todo
+
+you edit a todo
+
+you delete a todo
+
+you mark a todo completed
+
+💾 React automatically saves the updated todos to localStorage.
+
+✔ No button needed
+✔ No extra work
+✔ It always stays updated
+🎉 Final Summary (Short and Clear)
+🔹 Before Render
+
+useState initializer runs
+
+You can load data here
+
+UI uses this data immediately
+
+🔹 After Render
+
+useEffect runs
+
+Good for saving, fetching from APIs
+
+NOT good for loading initial UI data
+
+🔹 No Save Button Needed
+
+Your [todos] useEffect already saves automatically.
+
+Great — you are very close! Let's fix everything step by step, very simply, with zero confusion.
+I will answer all your questions:
+
+✅ 1. Why you got: “cannot redeclare block-scoped variable”
+
+This error happens because you wrote:
+
+const [todos, setTodos] = useState([]);
+const [todos, setTodos] = useState(() => {...});
+
+
+You declared todos twice → React does not allow that.
+
+You must choose one of them.
+
+✔ WRONG (two declarations)
+const [todos, setTodos] = useState([]);
+const [todos, setTodos] = useState(() => {...});  // ❌ duplicate
+
+✔ CORRECT (only one)
+const [todos, setTodos] = useState(() => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+});
+
+✅ 2. Your "func" version is NOT correct
+
+You tried:
+
+const locStorage = (todos) => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+};
+
+
+This function does nothing with React state.
+It does not load todos.
+React does not use this function anywhere.
+So it cannot replace:
+
+const [todos, setTodos] = useState(...)
+
+
+You must use useState() to load initial data.
+
+⭐ THE ONLY CORRECT WAY for initial load
+
+Use this:
+
+const [todos, setTodos] = useState(() => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+});
+
+
+This runs before the first render and loads your todos.
+
+✅ 3. And for saving:
+
+This runs after every change:
+
+useEffect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+🔍 4. Why you cannot see it in Application → Local Storage?
+
+Here is what must happen:
+
+Step 1 — Open DevTools
+
+Right-click → Inspect
+
+Step 2 — Click Application tab
+
+If you don't see Application:
+
+click » arrow on top tabs to find more tabs
+
+or press Ctrl + Shift + I then go to Application
+
+Step 3 — On left side → Expand "Storage"
+
+You will see:
+
+Local Storage
+
+Session Storage
+
+IndexedDB
+
+Cookies
+
+Step 4 — Click Local Storage → click your URL
+
+Example:
+
+http://localhost:5173
+http://localhost:3000
+
+Step 5 — Look for:
+Key	Value
+todos	[ {...}, {...} ]
+
+If you still don't see it → it means:
+
+your saving useEffect never ran
+
+or todos is empty
+
+or your component never updated state
+
+If you want, show me your component and I can find the problem immediately.
+
+🎯 5. Your question: “What if I want real app? Is it difficult at this level?”
+
+Absolutely NOT difficult.
+
+You already learned:
+
+Add todo
+
+Edit todo
+
+Delete todo
+
+Mark completed
+
+Save to localStorage
+
+Load from localStorage
+
+These are the exact skills needed for real apps.
+You are doing very well right now.
+
+Next skills after this:
+
+filtering (show all / completed / active)
+
+animations
+
+backend API
+
+database
+
+authentication
+
+But you are already on the right path.
+
+⭐ If you want, I can send you a complete final Todo App with:
+
+✔ Add
+✔ Edit
+✔ Delete
+✔ Complete
+✔ Save to localStorage
+✔ Load before render (best way)
+
+✅ 1. “Is useState only for changes? Or also for initial load?”
+❗ useState does both:
+✔ A) It sets the initial state
+
+(before the screen shows anything)
+
+✔ B) It lets you update that state later
+
+(when the user interacts)
+
+So yes:
+
+useState is responsible for initial load + all future updates
+
+This is why we can do:
+
+const [todos, setTodos] = useState(() => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+});
+
+
+This sets the first value of todos.
+
+Then later…
+setTodos(...) changes it.
+
+✅ 2. “If I use useState(() => {…}), is it a problem because todos is an array?”
+✔ NO problem at all
+
+React doesn’t care if the initial value is:
+
+array []
+
+object {}
+
+number 0
+
+string "hello"
+
+value from localStorage
+
+result of a function
+
+This is valid:
+
+const [todos, setTodos] = useState(() => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+});
+
+
+Because:
+
+if you have saved todos → return that array
+
+if not → return empty array []
+
+So React always receives an array, no matter what.
+
+✔ You do not need to write:
+useState([])
+
+
+Because this already returns an array in both cases.
+
+✅ 3. “Is useEffect for saving required?”
+✔ YES — useEffect is required for saving to localStorage.
+
+This code:
+
+useEffect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+
+Means:
+
+Whenever todos changes → save it to localStorage automatically.
+
+Without this, data will never be saved.
+
+❗ useState does NOT save to localStorage
+
+useState only manages state inside React — not inside browser storage.
+
+So yes:
+
+useState → load initial data
+
+setTodos → change data
+
+useEffect → save data
+
+You need all three.
+
+🎉 Complete Simple Understanding
+✔ useState → loads initial todos
+✔ setTodos → updates todos when user interacts
+✔ useEffect → saves updated todos to localStorage
+📌 Example Flow
+
+First load → useState initializer runs
+
+UI shows
+
+User adds a todo → setTodos updates state
+
+useEffect notices change → saves to localStorage
+
+📍 If you want:
+
+I can give you a complete cleaned, final working todo app with comments so you understand everything.
+
+✅ 1. Your page shows empty even after saving todos
+
+This means:
+Your initial useState(() => {...}) is throwing an error before rendering, so React stops and shows nothing.
+
+The error is usually caused by:
+
+❌ You used a wrong variable or wrote something like:
+const saved = localStorage.getItem("todos");
+return saved ? JSON.parse(saved) : [];
+
+
+This code is correct — IF your saved localStorage value is valid JSON.
+
+But the error you posted means that something inside JSON.parse() failed.
+
+✔ Solution:
+
+Before parsing, check that the saved value is valid:
+
+const [todos, setTodos] = useState(() => {
+  try {
+    const saved = localStorage.getItem("todos");
+    return saved ? JSON.parse(saved) : [];
+  } catch (error) {
+    console.error("Error parsing todos:", error);
+    return [];
+  }
+});
+
+
+Now even if broken data exists in localStorage, the app will not crash.
+
+✅ 2. “Is useState only for change? Or also for initial load?”
+
+✔ useState does both:
+
+Loads initial value before the first render
+
+Updates value when changed
+
+example:
+
+const [count, setCount] = useState(0);
+
+
+0 is used before first render
+
+setCount() changes value after render
+
+That’s why useState is required for loading initial todos.
+✅ 3. About your question: “If todos is an array, is it a problem?”
+
+✔ No problem at all.
+
+useState() can hold anything:
+
+string
+
+number
+
+object
+
+array
+
+function
+
+boolean
+
+So this is 100% valid:
+
+const [todos, setTodos] = useState([]);
+
+
+And also this:
+
+const [todos, setTodos] = useState(() => []);
+
+✅ 4. Why useEffect runs after every change
+
+Your code:
+
+useEffect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+✔ Meaning:
+
+Whenever todos changes → save to localStorage.
+
+This ensures:
+
+add todo → saved
+
+delete todo → saved
+
+edit todo → saved
+
+mark as done → saved
+
+Without this, nothing will stay saved.
+
+✅ 5. Why your saved todos did not load
+
+There are 3 usual causes:
+
+❌ Cause 1 — You saved "undefined" in localStorage
+
+Then JSON.parse("undefined") will crash.
+
+❌ Cause 2 — You saved wrong format
+
+ex: accidentally saved a string instead of JSON.
+
+❌ Cause 3 — You reloaded page before saving happened
+
+(useEffect did not run yet)
+
+⭐ The Correct FULL Code (copy–paste)
+const [todos, setTodos] = useState(() => {
+  try {
+    const saved = localStorage.getItem("todos");
+    return saved ? JSON.parse(saved) : [];
+  } catch (err) {
+    console.error("Error loading todos:", err);
+    return [];
+  }
+});
+
+useEffect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+⭐ Bonus: Explain this line
+localStorage.setItem("todos", JSON.stringify(todos));
+
+
+✔ JSON.stringify()
+Converts JS objects/arrays → JSON string
+React state cannot be saved directly — must be a string.
+
+Example:
+
+[{ text: "Hello", done: false }]
+
+
+becomes:
+
+"[{\"text\":\"Hello\",\"done\":false}]"
+
+
+✔ localStorage.setItem("todos", ...)
+Saves to browser memory that stays even after reload.
+
+If you want, send me your TodoApp.jsx (full code)
+
+I will correct it and fix the bug for you 100%.
+
+🌟 1. What is localStorage?
+
+localStorage is a small storage space inside your browser.
+
+It belongs to your browser (Chrome, Firefox, etc.)
+
+It saves data permanently
+
+Even if you refresh, close tab, restart computer, the data stays.
+
+Example:
+
+If you save todos today →
+They will still be there tomorrow.
+
+🌟 2. What is localStorage.getItem()?
+
+It is a function that gets (reads) something from localStorage.
+
+Example:
+localStorage.getItem("name");
+
+
+It tries to read the value stored under the key "name".
+
+localStorage works like a box with labels:
+Key	Value
+"name"	"Siti"
+"todos"	"[...]"
+
+So:
+
+localStorage.getItem("name")  // returns: "Siti"
+
+
+If the key does NOT exist:
+
+localStorage.getItem("unknown") // returns: null
+
+🌟 3. What is JSON.parse()?
+
+JSON.parse() converts a JSON string → back to a JavaScript object/array.
+
+Because localStorage only saves strings.
+
+So if you save this array:
+
+[{ text: "Learn React", completed: false }]
+
+
+You must first convert it to a string:
+
+JSON.stringify(todos)
+
+
+This gives:
+
+"[{\"text\":\"Learn React\",\"completed\":false}]"
+
+
+Then save it:
+
+localStorage.setItem("todos", JSON.stringify(todos));
+
+
+Now later, when you want to read it:
+
+const saved = localStorage.getItem("todos");
+
+
+You get the string again.
+
+So you must convert string → array:
+
+JSON.parse(saved);
+
+
+Now you get back:
+
+[{ text: "Learn React", completed: false }]
+
+🌟 4. How everything works together
+✨ Saving todos
+localStorage.setItem("todos", JSON.stringify(todos));
+
+
+Convert array → string
+
+Save string inside localStorage
+
+✨ Loading todos
+const saved = localStorage.getItem("todos");
+const todos = saved ? JSON.parse(saved) : [];
+
+
+Read the string
+
+If exists → convert string → array
+
+Return array
+
+🌟 5. A simple story explanation
+
+Imagine your browser has a small notebook called localStorage.
+
+When you add todos:
+
+React writes this into the notebook:
+
+Key: "todos"
+Value: "[{\"text\":\"Buy milk\"}]"
+
+
+(Yes, it's stored as a string.)
+
+When you refresh the page:
+
+React reads the notebook:
+
+What is under key "todos"?
+
+
+It finds the string, but React needs an array, so:
+
+JSON.parse → converts the text back to array
+
+React loads it into state
+
+🌟 6. Small Example (step-by-step)
+Saving:
+const todos = ["a", "b", "c"];
+localStorage.setItem("todos", JSON.stringify(todos));
+
+
+localStorage now contains:
+
+todos → "["a","b","c"]"
+
+Loading:
+const saved = localStorage.getItem("todos");  // "["a","b","c"]"
+JSON.parse(saved);                            // turns back to ["a","b","c"]
+
+🌟 Summary
+Feature	Meaning	Example
+localStorage	Browser memory	stays after refresh
+getItem()	Read data	localStorage.getItem("todos")
+setItem()	Write/save data	localStorage.setItem("todos", "...")
+JSON.stringify()	Convert array → string	save to storage
+JSON.parse()	Convert string → array	load from storage
+
+If you want, I can draw a diagram or explain it with animations (text-based) to make it even clearer.
+
+Would you like that?
+
+✅ Your problem is NOT with localStorage.
+❗ Your problem is that you declared todos AFTER using it → so React crashes.
+
+❌ You used todos before it was defined
+Look at your code order:
+function AddTodoList() {
+    setTodos([{id: Date.now(), text, completed: false }, ...todos ]);
+}
+
+But todos is defined later:
+const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem("todos");
+    return saved ? JSON.parse(saved) : [];
+});
+
+React must read todos before you use it.
+But in your file, React reaches AddTodoList() and deleteTodo() and toggleCompleted()…
+and inside them you use todos, but React hasn't created todos state yet.
+So React crashes → blank screen → error boundary message.
+
+✅ ✔ FIX: Move the todos state to the top, BEFORE any function that uses it
+Correct order:
+export default function TodoApp() {
+
+    const [text, setText] = useState("");
+    const [ediId, setEditId] = useState(null);
+    const [editText, setEditText] = useState("");
+
+    // ❗ MUST COME BEFORE any function using todos
+    const [todos, setTodos] = useState(() => {
+        const saved = localStorage.getItem("todos");
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    // now your functions are safe
+    function AddTodoList() {
+        if (text.trim() === "") return;
+        setTodos([{ id: Date.now(), text, completed: false }, ...todos]);
+        setText("");
+    }
+
+    function deleteTodo(id) {
+        setTodos(todos.filter(todo => todo.id !== id));
+    }
+
+    function toggleCompleted(id) {
+        const updatedTodos = todos.map(todo =>
+            todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        );
+        setTodos(updatedTodos);
+    }
+
+✔ Now React knows todos before any function touches it.
+
+🟢 Example of correct structure
+Here is the correct skeleton:
+export default function TodoApp() {
+    // 1. All states at top
+    const [text, setText] = useState("");
+    const [editId, setEditId] = useState(null);
+    const [editText, setEditText] = useState("");
+
+    const [todos, setTodos] = useState(() => {
+        const saved = localStorage.getItem("todos");
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    // 2. Functions next
+    function AddTodoList() { ... }
+    function deleteTodo(id) { ... }
+    function toggleCompleted(id) { ... }
+
+    useEffect(() => {
+        localStorage.setItem("todos", JSON.stringify(todos));
+    }, [todos]);
+
+    // 3. JSX at bottom
+    return ( ... );
+}
+
+
+🟢 Why your input textbox disappeared?
+Because React crashed before rendering JSX.
+If React encounters an error inside your component, it stops rendering → blank screen.
+
+🟢 Summary
+IssueExplanationFixYou used todos before defining itFunctions use todos → but state declared laterMove todos state to TOPBlank screenReact crashedReorder codeError boundary messageComponent threw an errorFix state order
+
+If you want, I can reorganize your full component correctly for you.
+
+Let’s fix this step-by-step.
+Your issue is VERY simple:
+
+❌ Right now, your code is doing this:
+1️⃣ Component loads
+2️⃣ todos starts as empty array
+
+(Because you used useState([]) OR declared it after functions)
+
+3️⃣ Then this runs:
+useEffect(() => {
+    const storedTodos = localStorage.getItem('todos');
+    if (storedTodos) setTodos(JSON.parse(storedTodos));
+}, []);
+
+
+This loads the data from localStorage AFTER the first render.
+
+4️⃣ Then this runs:
+useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+
+But todos is STILL empty at this time, so it saves an empty array → overwriting your storage.
+
+⭐ Result:
+
+Local storage becomes empty → nothing is displayed.
+
+❗ This method is WRONG because:
+
+You load from localStorage AFTER initial render
+
+And save EMPTY todos immediately
+
+So the saved data is LOST.
+
+✔✔ THE ONLY CORRECT WAY (NO double render, no losing data):
+✅ Load FROM localStorage inside useState (lazy initializer)
+Before the first render
+✔ No overwriting
+✔ No double render
+✔ Works perfectly
+const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem("todos");
+    return saved ? JSON.parse(saved) : [];
+});
+
+✔ Save TO localStorage using useEffect
+useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+Only two lines needed. Everything else should be removed.
+
+❗ Remove this — this is the cause of your problem:
+
+useEffect(() => {
+    const storedTodos = localStorage.getItem('todos');
+    if (storedTodos) setTodos(JSON.parse(storedTodos));
+}, []);
+
+🔥 FINAL WORKING VERSION (for todos only)
+// 1. Load before first render (correct)
+const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem("todos");
+    return saved ? JSON.parse(saved) : [];
+});
+
+// 2. Save after any change
+useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+💡 Why does this work?
+🎯 useState initializer runs BEFORE the first render
+
+This means:
+
+You never save an empty array
+
+You never overwrite your storage incorrectly
+
+You get back exactly what was saved earlier
+
+🟢 Your application will work perfectly with this setup.
+
+Great question — and the answer is very important.
+
+✅ useEffect CAN load from localStorage
+
+But it causes a problem.
+
+Let me explain clearly:
+
+🔵 1. Does useEffect work for loading data?
+
+✔ Yes, useEffect can read from localStorage.
+
+Example:
+
+useEffect(() => {
+    const saved = localStorage.getItem("todos");
+    if (saved) setTodos(JSON.parse(saved));
+}, []);
+
+
+This works — it does load the data.
+
+🔴 2. But why is it NOT recommended?
+
+Because useEffect runs AFTER the first render, so:
+
+✔ First render → todos = []
+✔ useEffect loads data → todos = saved data
+✔ React renders AGAIN (second render)
+
+This causes:
+
+❌ A flash where UI shows empty list
+❌ Unnecessary re-render
+❌ LocalStorage can be overwritten accidentally
+
+This is why you saw empty page before seeing saved todos
+and why your saved data disappeared.
+
+🟢 3. Why useState(() => {}) is the correct way?
+
+Because the initializer function runs:
+
+⭐ BEFORE first render
+⭐ BEFORE ANY UI appears
+⭐ Without overwriting localStorage
+
+So:
+
+No double render
+
+No flashing
+
+No overwriting
+
+Data appears immediately
+
+This is why it works perfectly.
+
+🟡 Summary
+Method	Does it load?	When does it load?	Recommended?
+useEffect(..., [])	✔ Yes	❌ After first render	❌ No (bad UX + risk of overwriting)
+useState(() => ...)	✔ Yes	⭐ Before first render	⭐ Best practice
+🟢 Final Answer
+✔ useEffect can load from localStorage
+❌ but it is not recommended
+⭐ useState initializer is the correct way
+
+Great questions — let's make this super clear and easy.
+
+✅ 1. Why React renders AGAIN when you use useEffect?
+
+This is the key:
+
+⭐ useEffect runs after the first render.
+
+Inside the effect, you call:
+
+setTodos(...)
+
+
+And whenever you call a state updater, React MUST render again.
+
+So the sequence becomes:
+🔹 Render #1
+
+todos = []
+
+UI shows an empty list
+
+🔹 useEffect runs
+
+Reads localStorage:
+
+const saved = localStorage.getItem("todos");
+setTodos(JSON.parse(saved));
+
+
+⚠️ setTodos changes state.
+
+🔹 Render #2
+
+todos = saved data
+
+UI updates and shows your list
+
+That's why useEffect → ALWAYS causes a second render when loading data.
+
+It’s not optional. It’s how React works.
+
+❓ “Why can’t we stop the second render?”
+
+Because:
+
+🚫 You cannot stop re-render after state changes.
+
+This rule is built into React.
+
+React re-renders every time you update state
+→ using setTodos, setText, setEditText, anything.
+
+So:
+
+❌ You cannot stop the second render
+❌ You cannot control it
+❌ You cannot bypass React behavior
+
+That’s why loading from useEffect is not good for initial data.
+
+⭐ 2. So when should useEffect be used to load data?
+
+UseEffect is perfect for:
+
+✔ Fetching from API
+✔ Listening to browser events (scroll, resize)
+✔ Saving to localStorage (like your code)
+✔ Running code when state changes
+✔ Running side effects after rendering
+
+Example:
+
+useEffect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+🔥 This is the correct use of useEffect.
+
+Saving to localStorage = ⭐ perfect side effect.
+
+❌ But NOT perfect for loading initial data
+
+Because:
+
+It loads after render
+
+UI flashes with empty data
+
+You get double render
+
+Can overwrite saved data
+
+⭐ 3. So how should we load initial data?
+
+By using useState(() => initializer):
+
+const [todos, setTodos] = useState(() => {
+  const saved = localStorage.getItem("todos");
+  return saved ? JSON.parse(saved) : [];
+});
+
+
+This runs:
+
+BEFORE the first render
+
+→ No flashing
+→ No double render
+→ No overwriting
+→ UI shows correct data immediately
+
+🟢 Final Summary
+❓ Why second render?
+
+Because setTodos() inside useEffect triggers it.
+
+❓ Can we stop it?
+
+❌ No. React will always re-render after state change.
+
+❓ Should useEffect be used for loading saved data?
+
+❌ No.
+
+❓ What is useEffect good for?
+
+✔ Saving to localStorage
+✔ Running code after render
+✔ Fetching APIs
+✔ Listening to DOM events
+
+❓ What should load initial data?
+
+⭐ useState(() => ...)
+
+Great question — and your understanding is correct.
+Both methods read from localStorage, but they run at different points in the React lifecycle, and that is the key.
+
+I’ll explain clearly and simply.
+
+✅ Why useEffect(() => {...}, []) causes the todos to disappear
+Important rule:
+
+useEffect ALWAYS runs after the first render.
+
+So the flow becomes:
+
+Flow with useEffect
+
+1️⃣ First render happens
+
+todos starts as [] (because useState([]) or whatever you set)
+
+UI renders with empty todos
+
+2️⃣ Then useEffect runs
+
+It reads localStorage
+
+It calls setTodos(...)
+
+This triggers a second render
+
+Now todos appear
+
+So far everything is fine.
+
+❗BUT there is a hidden problem:
+
+During the first render, before localStorage loads, something ELSE in your component may run using the empty todos and overwrite localStorage again.
+
+Example:
+
+Maybe you have useEffect that saves todos every time todos changes.
+
+useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+
+This effect runs when todos is [] on the first render.
+
+That means:
+
+❌ Step-by-step
+
+First render → todos = []
+
+Save-effect runs → writes [] to localStorage
+(You accidentally wiped the saved todos!)
+
+Second render loads localStorage → now it loads []
+
+So your saved todos disappear.
+
+✅ Why the useState lazy initializer works
+
+This method:
+
+const [todos, setTodos] = useState(() => {
+    try {
+        const saved = localStorage.getItem("todos");
+        return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+        return [];
+    }
+});
+
+What’s special?
+✔ React reads localStorage before the first render
+
+This means:
+
+1️⃣ React calls the function → gets todos from localStorage
+2️⃣ First render happens already with the correct todos
+3️⃣ No effect writes empty todos into localStorage
+4️⃣ NOTHING wipes localStorage
+5️⃣ UI loads correctly
+
+👉 No double rendering problem
+👉 No overwriting localStorage
+👉 No flickering UI
+🔥 Summary (very important)
+Method	When it runs	Problem?	Result
+useEffect(() => loadFromLocalStorage(), [])	After first render	Can overwrite saved data	Todos disappear
+useState(() => loadFromLocalStorage())	Before first render	Safe	Todos load correctly
+🟢 The correct and recommended solution
+
+💯 Always load initial state from localStorage using lazy initialization:
+
+const [todos, setTodos] = useState(() => {
+    try {
+        const saved = localStorage.getItem("todos");
+        return saved ? JSON.parse(saved) : [];
+    } catch(e) {
+        return [];
+    }
+});
+
+
+And THEN save using useEffect:
+
+useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+Great question — this is the exact point that confuses almost every beginner, but you’re VERY close to understanding it.
+
+Let me explain it slowly and clearly 👇
+
+💡 KEY: useEffect does save your updated todos — but the problem happens BEFORE that.
+
+Let’s walk through the REAL timeline.
+
+✅ Timeline of what actually happens when your app loads
+STEP 1 — First Render
+const [todos, setTodos] = useState([]);
+
+
+React sets:
+
+todos = []
+
+
+(Your real saved todos are NOT loaded yet.)
+
+UI displays [].
+
+STEP 2 — useEffect for saving runs
+useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos)); 
+}, [todos]);
+
+
+Since todos = [], React stores:
+
+localStorage = "[]"
+
+
+❌ This overwrites your real saved todos.
+❌ This happens BEFORE loading them.
+
+So your saved data is GONE.
+
+STEP 3 — useEffect for loading runs (your first solution)
+useEffect(() => {
+    const saved = localStorage.getItem("todos");
+    setTodos(JSON.parse(saved));
+}, []);
+
+
+Now localStorage contains only "[]"
+→ so setTodos([])
+
+Your todos disappear.
+
+🔥 So the REAL problem is:
+❗ You are SAVING BEFORE LOADING.
+
+The order is:
+
+1️⃣ Initial empty todos are saved
+2️⃣ THEN your saved todos load (but it's too late—they were wiped)
+
+❓ But wait — why doesn’t useEffect save the updated todos later?
+
+It does!
+
+When you add a todo:
+
+setTodos([...todos, newTodo]);
+
+
+Then useEffect runs:
+
+localStorage.setItem("todos", JSON.stringify(todos));
+
+
+and it saves correctly.
+
+✔ After the first load
+
+✓ Saving works
+✓ Everything is correct
+
+❗ THE ONLY PROBLEM IS THE FIRST PAGE LOAD
+
+❗ On the very first page load:
+
+todos start as []
+
+save-effect runs
+
+empty [] is saved to localStorage
+
+your saved todos get destroyed
+
+then load-effect loads []
+
+This only happens at startup.
+
+This is why we NEVER load localStorage in useEffect.
+
+✅ The Correct Pattern (Pro React Standard)
+✔ 1. Load from localStorage inside useState(), BEFORE first render
+const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem("todos");
+    return saved ? JSON.parse(saved) : [];
+});
+
+✔ 2. Save using useEffect
+useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+
+Now:
+
+🟢 First Render
+
+todos start with saved value
+
+No overwrite
+
+No empty []
+
+Nothing disappears
+
+🎯 Final Answer:
+❓ Why did useEffect not save updated todos?
+
+It does save updated todos — the problem is the first render saving empty [] BEFORE loading the real data.
+
+❓ How do we fix it?
+
+Load data using useState lazy initializer, NOT useEffect.
+
+You're asking exactly the right questions — let’s answer them clearly and remove all confusion permanently.
+
+✅ 1. Does useState([]) stay empty forever?
+
+No.
+
+useState([]) means:
+
+👉 On FIRST render, before anything else,
+todos = []
+
+But after that:
+
+When you call setTodos(...),
+
+React updates the value
+
+And re-renders
+
+So todos becomes the updated list.
+
+❗BUT the problem is only the very first render:
+
+Before your effect loads from localStorage,
+todos is still [] → so your SAVE effect writes [] into localStorage and erases your real todos.
+
+After that, everything is normal.
+
+🔥 2. So does useEffect mean: used only for saving to localStorage, NOT loading?
+✔ Yes — BEST PRACTICE in React:
+Load once → inside useState lazy initializer
+Save on every change → inside useEffect
+
+Why?
+
+Because:
+
+❌ useEffect runs too late to load initial data
+
+It runs after first render.
+
+This means:
+
+First render uses []
+
+Save-effect writes [] to localStorage
+
+Your real saved todos get overwritten
+
+Then load-effect loads []
+
+This is why your todos disappeared!
+
+🟢 3. Proper React mental model
+✔ useState is for INITIAL value
+
+This value is set during the very first render
+
+Lazy initializer (useState(() => {...})) runs before rendering
+
+✔ useEffect is for SIDE EFFECTS after rendering:
+
+Saving to localStorage
+
+Fetching API data
+
+Subscribing to events
+
+Timers, intervals, etc.
+
+🧠 Why we do NOT load localStorage inside useEffect(() => {...}, [])
+
+Because:
+
+useEffect runs AFTER first render.
+
+This causes:
+
+❗FIRST render:
+todos = []
+
+❗Saving effect runs:
+localStorage.setItem("todos", "[]")
+
+
+Your saved todos are erased.
+
+❗Loading effect runs:
+
+Loads [] from localStorage.
+
+🟢 Correct pattern (memorize this!)
+✔ Load from localStorage BEFORE first render
+const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem("todos");
+    return saved ? JSON.parse(saved) : [];
+});
+
+✔ Save to localStorage AFTER todos change
+useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
+
+
+Now:
+
+No double overwrite
+
+No disappearing todos
+
+No flickering
+
+Saving works perfectly
+
+🎯 FINAL ANSWER TO YOUR QUESTIONS
+Q1: Does useState([]) stay empty even after todos update?
+
+❌ No.
+It updates correctly when you call setTodos.
+
+The issue is only the first render.
+
+Q2: So useEffect is ONLY for saving, not for loading?
+
+✔ Yes — correct.
+
+useState(() => {...}) → load initial value
+
+useEffect(() => {...}, [todos]) → save updated todos
+
+This is exactly how React is designed.
+
+
+
+This error means your return statement is not inside a function or component.
+In React, a return (...) can ONLY be inside a component function.
+
+✅ Why it happens
+
+Somewhere above line 106, you likely have:
+
+❌ Missing closing curly brace }
+OR
+❌ You placed return outside the component
+OR
+❌ You accidentally closed the function early
+
+✅ Example of the mistake
+function TodoApp() {
+    const [text, setText] = useState("");
+
+    // ❌ missing closing bracket here
+
+return (
+   <div>...</div>
+);
+}
+
+✅ Correct structure
+
+Your component must look like this:
+
+function TodoApp() {
+    const [text, setText] = useState("");
+
+    // your code here…
+
+    return (
+        <>
+            <input
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+            />
+        </>
+    );
+}
+
+✔ What to do now
+
+Go to your file TodoApp.jsx, scroll ABOVE line 106, and check:
+
+Did you forget a } for a function?
+
+Did you accidentally close the function early?
+
+Did you write code after the function but still keep a return?
+
+You can copy-paste the entire TodoApp.jsx here, and I will fix it for you.
+
+
+🧠 Why is it called a “lazy initializer”?
+
+Because React delays (lazy-loads) the execution of the initialization function until the moment the component is first rendered — and React calls it only once, not on every re-render.
+
+Let’s break it down.
+
+✅ 1. useState(initialValue) – normal initializer
+
+Example:
+
+const [count, setCount] = useState(0);
+
+
+Here, React takes the value 0 directly (eager initialization).
+
+Meaning:
+
+No function is called
+
+No logic is executed
+
+The value is simply used as-is
+
+✅ 2. useState(() => initialValue) – lazy initializer
+
+Example:
+
+const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem("todos");
+    return saved ? JSON.parse(saved) : [];
+});
+
+
+Here you pass a function, not a value.
+
+⏳ React will not run this function immediately.
+⏳ React will run it lazily, only when the component first mounts.
+
+This is why it's called a lazy initializer.
+
+🔥 What makes it “lazy”?
+✔ React calls the function only once:
+
+During the first render
+
+Not during updates
+
+Not during re-renders
+
+✔ It avoids expensive work on every render
+
+For example:
+
+❌ BAD (runs on every render):
+
+useState(JSON.parse(localStorage.getItem('todos')));
+
+
+✔ GOOD (runs only once):
+
+useState(() => JSON.parse(localStorage.getItem('todos')));
+
+
+This is the REASON React introduced lazy initialization.
+
+🟢 Why this is useful?
+1. Performance
+
+If you run expensive operations (localStorage parsing, heavy calculations), lazy initialization prevents repeating them on every render.
+
+2. Correct timing for loading
+
+It allows you to load data before the first render.
+
+3. Avoids overwriting
+
+As explained earlier, loading via useEffect happens too late.
+
+🧩 Easy analogy
+
+Lazy initializer =
+“Run this only when needed, and only once.”
+
+Normal initializer =
+“Give me the value now.”
+
+🎯 Short Answer
+
+It’s called lazy initializer because the function you pass to useState is executed lazily (only when the component first mounts), not on every re-render.
+
