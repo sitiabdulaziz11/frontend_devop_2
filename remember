@@ -1,0 +1,16 @@
+
+will start on:
+❓ “Why can’t we stop the second render?”
+
+Because: on use effect for loading data issue fixing and understanding
+
+ Style completed todos differently (line-through or gray text)
+
+ Disable Add button if input is empty
+
+ Confirm before deleting (optional) feature
+
+  localstorage save  ✅
+  on 1. What does “before render” and “after render” mean? ✅
+  is it same with mobile app or not?
+  
