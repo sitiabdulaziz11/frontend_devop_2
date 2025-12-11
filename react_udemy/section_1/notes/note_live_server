@@ -1,0 +1,10 @@
+
+Open with VS Code Live Server (recommended)
+
+If you're using VS Code:
+
+Install the extension Live Server
+
+Right-click your index.html → "Open with Live Server"
+
+This will open the browser and auto-refresh when you edit the file.

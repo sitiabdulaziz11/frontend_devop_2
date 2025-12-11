@@ -7,7 +7,7 @@ is the librariy for web and native user interfaces.
  a javaScript library for building user interface.
 
  why use react
- - b/c justjs is quickly becomes cumbersome, error-prone,
+ - b/c just js is quickly becomes cumbersome, error-prone,
  sometimes hard to maintain or edit.
  react offers a simpler mental model
 
